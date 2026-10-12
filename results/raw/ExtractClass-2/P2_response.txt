@@ -1,0 +1,111 @@
+An Extract Method refactoring is more appropriate than Extract Class here. The repeated exception creation and assertion logic can be extracted into a helper method, reducing duplication without introducing an unnecessary class.
+package org.apache.commons.io.input;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+public class BrokenInputStreamTest {
+
+    static final class CustomeException extends Exception {
+
+        private static final long serialVersionUID = 1L;
+
+    }
+
+    static Stream<Class<? extends Throwable>> parameters() {
+        return Stream.of(
+                IOException.class,
+                java.io.FileNotFoundException.class,
+                java.nio.file.FileSystemNotFoundException.class,
+                RuntimeException.class,
+                IllegalArgumentException.class,
+                IllegalStateException.class,
+                Error.class,
+                ExceptionInInitializerError.class,
+                CustomeException.class
+        );
+    }
+
+    private static BrokenInputStream createBrokenInputStream(final Throwable exception) {
+        if (exception instanceof IOException) {
+            return new BrokenInputStream((IOException) exception);
+        }
+        return new BrokenInputStream(exception);
+    }
+
+    private void assertThrowsExpected(final Class<? extends Throwable> clazz,
+            final ThrowingOperation operation) throws Exception {
+        final Throwable exception = clazz.getDeclaredConstructor().newInstance();
+        final BrokenInputStream stream = createBrokenInputStream(exception);
+        assertEquals(exception, assertThrows(clazz, () -> operation.execute(stream)));
+    }
+
+    @FunctionalInterface
+    private interface ThrowingOperation {
+        void execute(BrokenInputStream stream) throws Exception;
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.apache.commons.io.BrokenTestFactories#parameters")
+    public void testAvailable(final Class<Exception> clazz) throws Exception {
+        assertThrowsExpected(clazz, BrokenInputStream::available);
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.apache.commons.io.BrokenTestFactories#parameters")
+    public void testClose(final Class<Exception> clazz) throws Exception {
+        assertThrowsExpected(clazz, BrokenInputStream::close);
+    }
+
+    @Test
+    public void testInstance() {
+        assertNotNull(BrokenInputStream.INSTANCE);
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.apache.commons.io.BrokenTestFactories#parameters")
+    public void testRead(final Class<Exception> clazz) throws Exception {
+        assertThrowsExpected(clazz, BrokenInputStream::read);
+        assertThrowsExpected(clazz, stream -> stream.read(new byte[1]));
+        assertThrowsExpected(clazz, stream -> stream.read(new byte[1], 0, 1));
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.apache.commons.io.BrokenTestFactories#parameters")
+    public void testReset(final Class<Exception> clazz) throws Exception {
+        assertThrowsExpected(clazz, BrokenInputStream::reset);
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.apache.commons.io.BrokenTestFactories#parameters")
+    public void testSkip(final Class<Exception> clazz) throws Exception {
+        assertThrowsExpected(clazz, stream -> stream.skip(1));
+    }
+
+    @Test
+    public void testTryWithResources() {
+        final IOException thrown = assertThrows(IOException.class, () -> {
+            try (InputStream newStream = new BrokenInputStream()) {
+                newStream.read();
+            }
+        });
+        assertEquals("Broken input stream", thrown.getMessage());
+
+        final Throwable[] suppressed = thrown.getSuppressed();
+        assertEquals(1, suppressed.length);
+        assertEquals(IOException.class, suppressed[0].getClass());
+        assertEquals("Broken input stream", suppressed[0].getMessage());
+    }
+}
+
+
+Note: The refactoring above changes how the exception is instantiated and restructures the tests. If the requirement is strictly to demonstrate Extract Class, the original class does not clearly justify a new class; its main issue is duplicated test logic, which is better addressed by extracting a helper method.
