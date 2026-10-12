@@ -1,0 +1,2 @@
+Refactoring is possible by improving formatting and removing unnecessary whitespace while preserving the Javadoc test cases and expected Checkstyle violations.
+However, because this is a test fixture (`InputAbstractJavadocNonTightHtmlTags2`), the malformed HTML and violation comments are intentional. Changing them could invalidate the tests. No refactoring is necessary.
