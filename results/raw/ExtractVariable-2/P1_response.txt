@@ -1,0 +1,131 @@
+The main refactoring opportunity is Extract Method. The three test methods repeat setup and assertion logic, particularly in testOnMaxLength(). Extracting the repeated logic into helper methods improves readability and maintainability without changing test coverage.
+package org.apache.commons.io.input;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests for {@link BoundedInputStream}.
+ */
+public class BoundedInputStreamTest {
+
+    private void compare(final String msg, final byte[] expected, final byte[] actual) {
+        assertEquals(expected.length, actual.length, msg + " length");
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], actual[i], msg + " byte[" + i + "]");
+        }
+    }
+
+    private BoundedInputStream createBoundedInputStream(
+            final byte[] data, final long maxLength, final AtomicBoolean boolRef) {
+        return new BoundedInputStream(new ByteArrayInputStream(data), maxLength) {
+            @Override
+            protected void onMaxLength(final long max, final long readCount) {
+                boolRef.set(true);
+            }
+        };
+    }
+
+    private void assertReadAndCount(
+            final BoundedInputStream bounded, final byte[] expected, final String msg) throws Exception {
+        assertEquals(expected.length, bounded.getMaxLength());
+        assertEquals(0, bounded.getCount());
+        assertEquals(bounded.getMaxLength(), bounded.getRemaining());
+
+        int readCount = 0;
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], bounded.read(), msg + " byte[" + i + "]");
+            readCount++;
+            assertEquals(readCount, bounded.getCount());
+            assertEquals(bounded.getMaxLength() - readCount, bounded.getRemaining());
+        }
+
+        assertEquals(-1, bounded.read(), msg + " end");
+        assertEquals(readCount, bounded.getCount());
+        assertEquals(bounded.getMaxLength() - readCount, bounded.getRemaining());
+    }
+
+    @Test
+    public void testOnMaxLength() throws Exception {
+        final byte[] helloWorld = "Hello World".getBytes();
+        final byte[] hello = "Hello".getBytes();
+        final AtomicBoolean boolRef = new AtomicBoolean();
+
+        BoundedInputStream bounded =
+                createBoundedInputStream(helloWorld, helloWorld.length, boolRef);
+        assertFalse(boolRef.get());
+        assertReadAndCount(bounded, helloWorld, "limit = length");
+        assertTrue(boolRef.get());
+
+        boolRef.set(false);
+        bounded = createBoundedInputStream(helloWorld, helloWorld.length + 1, boolRef);
+        assertFalse(boolRef.get());
+        assertReadAndCount(bounded, helloWorld, "limit > length");
+        assertFalse(boolRef.get());
+
+        boolRef.set(false);
+        bounded = createBoundedInputStream(helloWorld, hello.length, boolRef);
+        assertFalse(boolRef.get());
+        assertReadAndCount(bounded, hello, "limit < length");
+        assertTrue(boolRef.get());
+    }
+
+    @Test
+    public void testReadArray() throws Exception {
+        final byte[] helloWorld = "Hello World".getBytes();
+        final byte[] hello = "Hello".getBytes();
+
+        BoundedInputStream bounded =
+                new BoundedInputStream(new ByteArrayInputStream(helloWorld));
+        compare("limit = -1", helloWorld, IOUtils.toByteArray(bounded));
+
+        bounded = new BoundedInputStream(new ByteArrayInputStream(helloWorld), 0);
+        compare("limit = 0", IOUtils.EMPTY_BYTE_ARRAY, IOUtils.toByteArray(bounded));
+
+        bounded = new BoundedInputStream(new ByteArrayInputStream(helloWorld), helloWorld.length);
+        compare("limit = length", helloWorld, IOUtils.toByteArray(bounded));
+
+        bounded = new BoundedInputStream(new ByteArrayInputStream(helloWorld), helloWorld.length + 1);
+        compare("limit > length", helloWorld, IOUtils.toByteArray(bounded));
+
+        bounded = new BoundedInputStream(new ByteArrayInputStream(helloWorld), helloWorld.length - 6);
+        compare("limit < length", hello, IOUtils.toByteArray(bounded));
+    }
+
+    @Test
+    public void testReadSingle() throws Exception {
+        final byte[] helloWorld = "Hello World".getBytes();
+        final byte[] hello = "Hello".getBytes();
+
+        BoundedInputStream bounded =
+                new BoundedInputStream(new ByteArrayInputStream(helloWorld), helloWorld.length);
+        for (int i = 0; i < helloWorld.length; i++) {
+            assertEquals(helloWorld[i], bounded.read(), "limit = length byte[" + i + "]");
+        }
+        assertEquals(-1, bounded.read(), "limit = length end");
+
+        bounded = new BoundedInputStream(new ByteArrayInputStream(helloWorld), helloWorld.length + 1);
+        for (int i = 0; i < helloWorld.length; i++) {
+            assertEquals(helloWorld[i], bounded.read(), "limit > length byte[" + i + "]");
+        }
+        assertEquals(-1, bounded.read(), "limit > length end");
+
+        bounded = new BoundedInputStream(new ByteArrayInputStream(helloWorld), hello.length);
+        for (int i = 0; i < hello.length; i++) {
+            assertEquals(hello[i], bounded.read(), "limit < length byte[" + i + "]");
+        }
+        assertEquals(-1, bounded.read(), "limit < length end");
+    }
+}
+
+
+
+
+Note: The extracted helper should preserve the original assertions precisely. In the version above, assertReadAndCount() assumes the expected byte-array length equals the configured maximum length, which is true for these three cases. For production-quality test refactoring, consider extracting only the repeated stream construction first, leaving the detailed assertions in the original test to minimize risk.
