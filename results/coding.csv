@@ -1,5 +1,5 @@
 case,prompt,marker_A,marker_B,agreed,final_identified_0_1,note
-ExtractClass-1,P1,0,,,,
+ExtractClass-1,P1,0,,,,a
 ExtractClass-1,P2,0,,,,
 ExtractMethod-1,P1,1,,,,
 ExtractMethod-1,P2,1,,,,
