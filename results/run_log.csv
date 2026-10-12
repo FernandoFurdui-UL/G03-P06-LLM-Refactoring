@@ -1,1 +1,2 @@
 case,prompt,model,interface,temperature,datetime,response_file,valid_run,note
+ExtractClass-1,P1,GPT-5.6 luna,website,default,2026-10-12 15:15,results/raw/ExtractClass-1/P1_response.txt,yes,
