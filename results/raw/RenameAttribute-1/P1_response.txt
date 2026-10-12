@@ -1,0 +1,77 @@
+There are several refactoring opportunities in CustomImportOrderCheck, particularly around extracting responsibilities, simplifying control flow, and improving maintainability.
+The most suitable refactoring is Extract Class for import-group matching and ordering validation. However, introducing separate classes would create a larger change and could affect Checkstyle's configuration behavior. A safer approach is to simplify existing methods, remove redundant logic, and improve encapsulation while preserving the current behavior.
+Key opportunities:
+1. Simplify hasAnyImportInCurrentGroup() using a direct return when a match is found.
+2. Simplify getFullImportIdent() by removing the unnecessary null check if callers guarantee a valid AST.
+3. Improve compareImports() by using a clearer comparison loop.
+4. Improve encapsulation in RuleMatchForImport, whose fields are currently mutable.
+5. Extract repeated logic where doing so improves readability without changing behavior.
+Refactored code
+The following changes are drop-in replacements for the affected parts of the class. They preserve the existing structure and avoid an unnecessary redesign.
+1. Refactor findBetterPatternMatch()
+Make the matching result immutable and create a new result only when a better match is found.
+
+private static RuleMatchForImport findBetterPatternMatch(
+        String importPath, String group, Pattern regExp,
+        RuleMatchForImport currentBestMatch) {
+
+    RuleMatchForImport bestMatch = currentBestMatch;
+    final Matcher matcher = regExp.matcher(importPath);
+
+    while (matcher.find()) {
+        final int matchStart = matcher.start();
+        final int length = matcher.end() - matchStart;
+
+        if (length > bestMatch.matchLength
+                || (length == bestMatch.matchLength
+                && matchStart < bestMatch.matchPosition)) {
+            bestMatch = new RuleMatchForImport(group, length, matchStart);
+        }
+    }
+
+    return bestMatch;
+}
+
+
+
+2. Refactor RuleMatchForImport
+Make all fields final. This ensures that a match result cannot be accidentally modified after construction.
+
+private static final class RuleMatchForImport {
+
+    /** Position of matching string for current best match. */
+    private final int matchPosition;
+
+    /** Length of matching string for current best match. */
+    private final int matchLength;
+
+    /** Import group for current best match. */
+    private final String group;
+
+    private RuleMatchForImport(String group, int length, int position) {
+        this.group = group;
+        this.matchLength = length;
+        this.matchPosition = position;
+    }
+}
+
+
+
+3. Refactor hasAnyImportInCurrentGroup()
+Replace the explicit result variable and break with an early return.
+
+private boolean hasAnyImportInCurrentGroup(String currentGroup) {
+    for (ImportDetails currentImport : importToGroupList) {
+        if (currentGroup.equals(currentImport.getImportGroup())) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+
+Summary
+These changes improve immutability, readability, and maintainability without introducing new classes or changing the overall design.
+One important consideration: the original findBetterPatternMatch() updates the best match based on both match length and position. The refactored version preserves that selection logic. Run the existing unit tests after applying the changes to verify that import-group matching and ordering violations remain unchanged.
