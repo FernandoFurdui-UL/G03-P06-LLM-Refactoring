@@ -1,2 +1,3 @@
 case,prompt,model,interface,temperature,datetime,response_file,valid_run,note
 ExtractClass-1,P1,GPT-5.6 luna,website,default,2026-10-12 15:15,results/raw/ExtractClass-1/P1_response.txt,yes,
+ExtractClass-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:26,results/raw/ExtractClass-1/P2_response.txt,yes,Two earlier attempts discarded: wrong text pasted by us (not the P2 prompt)
