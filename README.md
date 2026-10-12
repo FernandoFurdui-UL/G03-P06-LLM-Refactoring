@@ -1,18 +1,17 @@
+## Paper
+We are reproducing part of Liu et al. (2025), "Exploring the potential of general purpose LLMs in automated software refactoring: an empirical study", published in Automated Software Engineering. https://doi.org/10.1007/s10515-025-00500-0
 
-## Study
-Liu et al., "Exploring the potential of general purpose LLMs in automated software refactoring: an empirical study", Automated Software Engineering (2025). https://doi.org/10.1007/s10515-025-00500-0
+## Where the data comes from
+All code, prompts and original answers come from the authors' replication package on GitHub: https://github.com/bitselab/LLM4Refactoring (commit 28108cd, downloaded 7 Oct 2026). We copied these files over without changing them, only renaming them. The two CSV files (sample_ids.csv and original_gpt_rq1.csv) were made by us from the authors' spreadsheets.
 
-## Source
-Replication package: https://github.com/bitselab/LLM4Refactoring, commit 28108cde5d802181e934411aa39207af00cbc669 (accessed 7 Oct 2026). Files in `sample/` and `original_results/` are copied unchanged from it.
+## What's in each folder
+sample: our 12 chosen cases. Each folder has the code we give ChatGPT (before.java), the developers' actual refactoring (after.java) and the paper's two prompts. sample_ids.csv lists the cases and what refactoring the developers did.
 
-## Folders
-- `sample/sample_ids.csv` – the 12 frozen RQ1 cases and the developers' real refactoring (answer key)
-- `sample/<case>/` – before.java (LLM input), after.java (ground truth), P1/P2 prompts
-- `original_results/` – the paper's own GPT answers and 0/1 scores for these cases (P1 1/12, P2 6/12)
-- `results/raw/<case>/` – our raw ChatGPT answers (never edited)
-- `results/run_log.csv` – one row per prompt sent
-- `results/coding.csv` – Marker A / Marker B / final mark per answer
-- `deviations.md` – any change from the frozen M1 plan
+original_results: the paper's ChatGPT answers for our 12 cases, and their scores (1/12 with P1, 6/12 with P2).
 
-## Evidence chain (RQ1)
-sample_ids.csv → sample/<case>/P?_prompt.txt → results/raw/<case>/P?_response.txt (+ run_log.csv) → results/coding.csv → P1/P2 totals → Tracker
+results: our ChatGPT answers go in raw (we never edit these), run_log.csv records each prompt we send, and coding.csv is where we mark each answer.
+
+deviations.md: anything we did differently from our Week 5 plan.
+
+## How to check a result
+Every score can be traced back. Start from a mark in coding.csv, find the matching answer in results/raw, then the prompt it came from in sample, and the case in sample_ids.csv.
