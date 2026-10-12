@@ -1,0 +1,49 @@
+There are several refactoring opportunities in DatabaseContainer:
+1. Remove redundant container startup logic. configure() starts the container and then checks whether it is running, potentially starting it again. The current code also dereferences DATABASE_CONTAINER before its null check, which fails for H2.
+2. Fix unused code. The Consumer<Configuration> parameter is used without importing java.util.function.Consumer, and the propertySetter parameter is never invoked. The configuration() method also references Configuration::addAsSystemProperties, which is not defined in the supplied class.
+3. Extract repeated database configuration. MariaDB and MySQL share several settings, making a helper method appropriate.
+4. Improve database selection. Use Locale.ROOT consistently and match exact database names rather than using substring matching, which can select the wrong database.
+5. Remove unused imports and preserve existing database-specific settings. This keeps the implementation focused without changing the intended configuration for each supported database.
+Here is the refactored version of the affected methods and the necessary import. The database-specific container definitions can remain unchanged.
+import java.util.function.Consumer;
+
+
+Replace configuration() and configure() with:
+public static Configuration configuration() {
+    return configure(Configuration::addAsSystemProperties);
+}
+
+private static Configuration configure(Consumer<Configuration> propertySetter) {
+    if (DATABASE_CONTAINER != null && !DATABASE_CONTAINER.isRunning()) {
+        synchronized (DATABASE_CONTAINER) {
+            if (!DATABASE_CONTAINER.isRunning()) {
+                DATABASE_CONTAINER.start();
+            }
+        }
+    }
+
+    Configuration configuration = DATABASE.configuration(DATABASE_CONTAINER);
+    propertySetter.accept(configuration);
+
+    return configuration;
+}
+
+
+Add this method to the Configuration class:
+public void addAsSystemProperties() {
+    System.setProperty(JdbcSettings.DIALECT, dialect);
+    System.setProperty(JdbcSettings.DRIVER, driver);
+    System.setProperty(JdbcSettings.URL, url);
+    System.setProperty(JdbcSettings.USER, user);
+    System.setProperty(JdbcSettings.PASS, pass);
+    System.setProperty(JdbcSettings.ISOLATION, isolation);
+}
+
+
+Why this is better:
+- Removes duplicate container startup logic.
+- Handles H2's null container correctly.
+- Uses synchronization to avoid concurrent startup attempts.
+- Actually invokes the supplied Consumer.
+- Implements the missing addAsSystemProperties() method referenced by the original code.
+Note: This corrects the inconsistencies in the supplied snippet while preserving the existing database definitions. The full class should be compiled and tested against the project's Hibernate and Testcontainers versions before merging.
