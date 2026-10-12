@@ -1,0 +1,143 @@
+Rename variable refactoring opportunities exist. The main improvements are replacing vague identifiers such as ast, tag, newLine, result, and node with descriptive names. No logic changes are necessary.
+package com.puppycrawl.tools.checkstyle.checks.javadoc;
+
+import com.puppycrawl.tools.checkstyle.StatelessCheck;
+import com.puppycrawl.tools.checkstyle.api.DetailNode;
+import com.puppycrawl.tools.checkstyle.api.JavadocTokenTypes;
+import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
+import com.puppycrawl.tools.checkstyle.utils.JavadocUtil;
+
+@StatelessCheck
+public class JavadocParagraphCheck extends AbstractJavadocCheck {
+
+    public static final String MSG_TAG_AFTER = "javadoc.paragraph.tag.after";
+    public static final String MSG_LINE_BEFORE = "javadoc.paragraph.line.before";
+    public static final String MSG_REDUNDANT_PARAGRAPH = "javadoc.paragraph.redundant.paragraph";
+    public static final String MSG_MISPLACED_TAG = "javadoc.paragraph.misplaced.tag";
+
+    private boolean allowNewlineParagraph = true;
+
+    public void setAllowNewlineParagraph(boolean value) {
+        allowNewlineParagraph = value;
+    }
+
+    @Override
+    public int[] getDefaultJavadocTokens() {
+        return new int[] {
+                JavadocTokenTypes.NEWLINE,
+                JavadocTokenTypes.HTML_ELEMENT,
+        };
+    }
+
+    @Override
+    public int[] getRequiredJavadocTokens() {
+        return getAcceptableJavadocTokens();
+    }
+
+    @Override
+    public void visitJavadocToken(DetailNode javadocToken) {
+        if (javadocToken.getType() == JavadocTokenTypes.NEWLINE
+                && isEmptyLine(javadocToken)) {
+            checkEmptyLine(javadocToken);
+        }
+        else if (javadocToken.getType() == JavadocTokenTypes.HTML_ELEMENT
+                && JavadocUtil.getFirstChild(javadocToken).getType()
+                == JavadocTokenTypes.P_TAG_START) {
+            checkParagraphTag(javadocToken);
+        }
+    }
+
+    private void checkEmptyLine(DetailNode newline) {
+        final DetailNode nearestToken = getNearestNode(newline);
+        if (nearestToken.getType() == JavadocTokenTypes.TEXT
+                && !CommonUtil.isBlank(nearestToken.getText())) {
+            log(newline.getLineNumber(), MSG_TAG_AFTER);
+        }
+    }
+
+    private void checkParagraphTag(DetailNode paragraphTag) {
+        final DetailNode nearestEmptyLine = getNearestEmptyLine(paragraphTag);
+        if (isFirstParagraph(paragraphTag)) {
+            log(paragraphTag.getLineNumber(), MSG_REDUNDANT_PARAGRAPH);
+        }
+        else if (nearestEmptyLine == null
+                || paragraphTag.getLineNumber() - nearestEmptyLine.getLineNumber() != 1) {
+            log(paragraphTag.getLineNumber(), MSG_LINE_BEFORE);
+        }
+        if (allowNewlineParagraph && isImmediatelyFollowedByText(paragraphTag)) {
+            log(paragraphTag.getLineNumber(), MSG_MISPLACED_TAG);
+        }
+    }
+
+    private static DetailNode getNearestNode(DetailNode currentNode) {
+        DetailNode nearestNode = currentNode;
+        while (nearestNode.getType() == JavadocTokenTypes.LEADING_ASTERISK
+                || nearestNode.getType() == JavadocTokenTypes.NEWLINE) {
+            nearestNode = JavadocUtil.getNextSibling(nearestNode);
+        }
+        return nearestNode;
+    }
+
+    private static boolean isEmptyLine(DetailNode newline) {
+        boolean isEmpty = false;
+        DetailNode previousSibling = JavadocUtil.getPreviousSibling(newline);
+        if (previousSibling != null
+                && previousSibling.getParent().getType() == JavadocTokenTypes.JAVADOC) {
+            if (previousSibling.getType() == JavadocTokenTypes.TEXT
+                    && CommonUtil.isBlank(previousSibling.getText())) {
+                previousSibling = JavadocUtil.getPreviousSibling(previousSibling);
+            }
+            isEmpty = previousSibling != null
+                    && previousSibling.getType() == JavadocTokenTypes.LEADING_ASTERISK;
+        }
+        return isEmpty;
+    }
+
+    private static boolean isFirstParagraph(DetailNode paragraphTag) {
+        boolean isFirst = true;
+        DetailNode previousNode = JavadocUtil.getPreviousSibling(paragraphTag);
+        while (previousNode != null) {
+            if (previousNode.getType() == JavadocTokenTypes.TEXT
+                    && !CommonUtil.isBlank(previousNode.getText())
+                    || previousNode.getType() != JavadocTokenTypes.LEADING_ASTERISK
+                    && previousNode.getType() != JavadocTokenTypes.NEWLINE
+                    && previousNode.getType() != JavadocTokenTypes.TEXT) {
+                isFirst = false;
+                break;
+            }
+            previousNode = JavadocUtil.getPreviousSibling(previousNode);
+        }
+        return isFirst;
+    }
+
+    private static DetailNode getNearestEmptyLine(DetailNode currentNode) {
+        DetailNode nearestEmptyLine = JavadocUtil.getPreviousSibling(currentNode);
+        while (nearestEmptyLine != null) {
+            final DetailNode previousSibling =
+                    JavadocUtil.getPreviousSibling(nearestEmptyLine);
+            if (nearestEmptyLine.getType() == JavadocTokenTypes.NEWLINE
+                    && isEmptyLine(nearestEmptyLine)) {
+                break;
+            }
+            nearestEmptyLine = previousSibling;
+        }
+        return nearestEmptyLine;
+    }
+
+    private static boolean isImmediatelyFollowedByText(DetailNode paragraphTag) {
+        final DetailNode nextSibling = JavadocUtil.getNextSibling(paragraphTag);
+        return nextSibling.getType() == JavadocTokenTypes.NEWLINE
+                || nextSibling.getType() == JavadocTokenTypes.EOF
+                || nextSibling.getText().startsWith(" ");
+    }
+}
+
+
+Key renamings:
+- ast → javadocToken
+- tag → paragraphTag
+- newLine → nearestEmptyLine
+- node → currentNode
+- result → isEmpty / isFirst
+- nearestToken-related traversal variable → nearestNode
+The refactoring improves readability while preserving the original logic.
