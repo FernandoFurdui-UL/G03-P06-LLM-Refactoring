@@ -1,0 +1,1 @@
+No extract class refactoring is necessary. The class is a test fixture designed to verify Checkstyle's handling of non-tight HTML tags in Javadoc comments. Extracting classes or moving fields and methods could interfere with the expected validation results and test coverage.
