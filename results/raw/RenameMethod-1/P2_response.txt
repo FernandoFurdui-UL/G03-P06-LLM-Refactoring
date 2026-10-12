@@ -1,0 +1,9 @@
+There are rename method refactoring opportunities in CommonUtil. The clearest candidate is isName(), which could be renamed to isQualifiedName() to clarify that it validates dot-separated Java identifiers.
+Other potential renames include:
+Original method	Suggested name	Reason
+baseClassName()	getSimpleClassName()	Clarifies that it extracts the name after the final dot.
+isPatternValid()	isValidPattern()	Improves naming consistency and readability.
+lengthExpandedTabs()	getExpandedTabLength()	Makes the return value and operation clearer.
+getUriByFilename()	resolveUriFromFilename()	Better communicates URI resolution.
+Recommended refactoring: Rename isName() to isQualifiedName() and update its Javadoc and all call sites. This is the strongest candidate because the current name is vague.
+The other suggestions are optional, and renaming public methods requires updating references across the project to avoid compilation errors.
