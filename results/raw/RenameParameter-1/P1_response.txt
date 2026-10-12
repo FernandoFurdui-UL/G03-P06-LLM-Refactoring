@@ -1,0 +1,107 @@
+The main refactoring opportunity is to extract the severity-level formatting into a separate method. This improves readability and separates the formatting logic from the main format() method. The existing helper methods can remain unchanged.
+package com.puppycrawl.tools.checkstyle;
+
+import java.util.Locale;
+
+import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+
+/**
+ * Represents the default formatter for log message.
+ * Default log message format is:
+ * [SEVERITY LEVEL] filePath:lineNo:columnNo: message. [CheckName]
+ * When the module id of the message has been set, the format is:
+ * [SEVERITY LEVEL] filePath:lineNo:columnNo: message. [ModuleId]
+ */
+public class AuditEventDefaultFormatter implements AuditEventFormatter {
+
+    /** Length of all separators. */
+    private static final int LENGTH_OF_ALL_SEPARATORS = 10;
+
+    /** Suffix of module names like XXXXCheck. */
+    private static final String SUFFIX = "Check";
+
+    @Override
+    public String format(AuditEvent event) {
+        final String fileName = event.getFileName();
+        final String message = event.getMessage();
+        final String severityLevelName = getSeverityLevelName(event.getSeverityLevel());
+
+        final StringBuilder sb = initStringBuilderWithOptimalBuffer(event, severityLevelName);
+
+        sb.append('[').append(severityLevelName).append("] ")
+                .append(fileName).append(':').append(event.getLine());
+
+        if (event.getColumn() > 0) {
+            sb.append(':').append(event.getColumn());
+        }
+
+        sb.append(": ").append(message).append(" [");
+
+        if (event.getModuleId() == null) {
+            sb.append(getCheckShortName(event));
+        }
+        else {
+            sb.append(event.getModuleId());
+        }
+
+        sb.append(']');
+
+        return sb.toString();
+    }
+
+    /**
+     * Returns the formatted severity level name.
+     *
+     * @param severityLevel severity level.
+     * @return formatted severity level name.
+     */
+    private static String getSeverityLevelName(SeverityLevel severityLevel) {
+        if (severityLevel == SeverityLevel.WARNING) {
+            return "WARN";
+        }
+
+        return severityLevel.getName().toUpperCase(Locale.US);
+    }
+
+    /**
+     * Returns the StringBuilder that should avoid StringBuffer.expandCapacity.
+     * bufferLength = fileNameLength + messageLength + lengthOfAllSeparators
+     * + severityNameLength + checkNameLength.
+     * Method is excluded from pitest validation.
+     *
+     * @param event audit event.
+     * @param severityLevelName severity level name.
+     * @return optimal StringBuilder.
+     */
+    private static StringBuilder initStringBuilderWithOptimalBuffer(
+            AuditEvent event, String severityLevelName) {
+        final int bufLen = LENGTH_OF_ALL_SEPARATORS + event.getFileName().length()
+                + event.getMessage().length() + severityLevelName.length()
+                + getCheckShortName(event).length();
+
+        return new StringBuilder(bufLen);
+    }
+
+    /**
+     * Returns check name without 'Check' suffix.
+     *
+     * @param event audit event.
+     * @return check name without 'Check' suffix.
+     */
+    private static String getCheckShortName(AuditEvent event) {
+        final String checkFullName = event.getSourceName();
+        String checkShortName = checkFullName.substring(checkFullName.lastIndexOf('.') + 1);
+
+        if (checkShortName.endsWith(SUFFIX)) {
+            final int endIndex = checkShortName.length() - SUFFIX.length();
+            checkShortName = checkShortName.substring(0, endIndex);
+        }
+
+        return checkShortName;
+    }
+}
+
+
+Refactoring applied: Extract Method (getSeverityLevelName).
+Note: The buffer-size calculation still uses the check name length even when a module ID is present. I left that behavior unchanged to keep the refactoring focused and avoid unrelated changes.
