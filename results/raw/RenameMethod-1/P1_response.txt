@@ -1,0 +1,47 @@
+The CommonUtil class has several refactoring opportunities. The main issue is that it contains many unrelated responsibilities, including string manipulation, file and URI handling, reflection, regular expressions, and resource management.
+The most appropriate refactoring is Extract Class, supported by Extract Method and simplification of redundant control flow. Below is a refactored version illustrating how to separate these responsibilities while preserving the existing public API.
+For a production codebase such as Checkstyle, I would perform this incrementally and run the existing test suite after each extraction.
+Suggested refactoring
+1. Extract string utilities — move identifier validation, whitespace handling, and filename manipulation into dedicated utility classes.
+2. Extract file and resource utilities — move URI resolution, classpath lookup, and path normalization into a file utility class.
+3. Extract reflection utilities — move constructor lookup and invocation into a reflection utility class.
+4. Simplify methods — remove unnecessary result variables and use early returns where they improve readability.
+For example, matchesFileExtension can be simplified without changing its intended behavior:
+
+public static boolean matchesFileExtension(File file, String... fileExtensions) {
+    if (fileExtensions == null || fileExtensions.length == 0) {
+        return true;
+    }
+
+    final String fileName = file.getName();
+
+    for (final String extension : fileExtensions) {
+        final String normalizedExtension = extension.startsWith(".")
+                ? extension
+                : "." + extension;
+
+        if (fileName.endsWith(normalizedExtension)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+
+Similarly, hasWhitespaceBefore can use an early return:
+
+public static boolean hasWhitespaceBefore(int index, String line) {
+    for (int i = 0; i < index; i++) {
+        if (!Character.isWhitespace(line.charAt(i))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+
+Important: I would not generate a supposedly complete replacement CommonUtil.java that silently removes methods or changes their behavior. Extracting classes safely requires updating imports and call sites across the project, and the original class's extensive API should remain compatible during that process. The two changes above are self-contained refactorings that can be applied immediately.
