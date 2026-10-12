@@ -1,0 +1,173 @@
+There are refactoring opportunities in RegexpCheck. The main improvements are extracting duplicated message-building logic into a helper method and simplifying the recursive matching logic into an iterative loop. This improves maintainability and avoids potential stack overflow on files containing many matches.
+package com.puppycrawl.tools.checkstyle.checks.regexp;
+
+// Existing imports and class documentation remain unchanged.
+
+@FileStatefulCheck
+public class RegexpCheck extends AbstractCheck {
+
+    public static final String MSG_ILLEGAL_REGEXP = "illegal.regexp";
+    public static final String MSG_REQUIRED_REGEXP = "required.regexp";
+    public static final String MSG_DUPLICATE_REGEXP = "duplicate.regexp";
+
+    private static final int DEFAULT_DUPLICATE_LIMIT = -1;
+    private static final int DEFAULT_ERROR_LIMIT = 100;
+
+    private static final String ERROR_LIMIT_EXCEEDED_MESSAGE =
+            "The error limit has been exceeded, "
+                    + "the check is aborting, there may be more unreported errors.";
+
+    private String message;
+    private boolean ignoreComments;
+    private boolean illegalPattern;
+    private int errorLimit = DEFAULT_ERROR_LIMIT;
+    private int duplicateLimit;
+    private boolean checkForDuplicates;
+    private int matchCount;
+    private int errorCount;
+    private Pattern format = Pattern.compile("^$", Pattern.MULTILINE);
+    private Matcher matcher;
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setIgnoreComments(boolean ignoreComments) {
+        this.ignoreComments = ignoreComments;
+    }
+
+    public void setIllegalPattern(boolean illegalPattern) {
+        this.illegalPattern = illegalPattern;
+    }
+
+    public void setErrorLimit(int errorLimit) {
+        this.errorLimit = errorLimit;
+    }
+
+    public void setDuplicateLimit(int duplicateLimit) {
+        this.duplicateLimit = duplicateLimit;
+        checkForDuplicates = duplicateLimit > DEFAULT_DUPLICATE_LIMIT;
+    }
+
+    public final void setFormat(Pattern pattern) {
+        format = CommonUtil.createPattern(pattern.pattern(), Pattern.MULTILINE);
+    }
+
+    @Override
+    public int[] getDefaultTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getAcceptableTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return CommonUtil.EMPTY_INT_ARRAY;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void beginTree(DetailAST rootAST) {
+        matcher = format.matcher(getFileContents().getText().getFullText());
+        matchCount = 0;
+        errorCount = 0;
+        findMatch();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void findMatch() {
+        final FileText text = getFileContents().getText();
+
+        while (matcher.find()) {
+            final LineColumn start = text.lineColumn(matcher.start());
+            final int startLine = start.getLine();
+            final boolean ignore = isIgnore(startLine, text, start);
+
+            if (!ignore) {
+                matchCount++;
+
+                if (illegalPattern
+                        || checkForDuplicates && matchCount - 1 > duplicateLimit) {
+                    errorCount++;
+                    logMessage(startLine);
+                }
+            }
+
+            if (!canContinueValidation(ignore)) {
+                return;
+            }
+        }
+
+        if (!illegalPattern && matchCount == 0) {
+            log(1, MSG_REQUIRED_REGEXP, getMessage());
+        }
+    }
+
+    private boolean canContinueValidation(boolean ignore) {
+        return errorCount <= errorLimit - 1
+                && (ignore || illegalPattern || checkForDuplicates);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean isIgnore(int startLine, FileText text, LineColumn start) {
+        final LineColumn end;
+
+        if (matcher.end() == 0) {
+            end = text.lineColumn(0);
+        }
+        else {
+            end = text.lineColumn(matcher.end() - 1);
+        }
+
+        boolean ignore = false;
+
+        if (ignoreComments) {
+            final FileContents fileContents = getFileContents();
+            ignore = fileContents.hasIntersectionWithComment(
+                    startLine,
+                    start.getColumn(),
+                    end.getLine(),
+                    end.getColumn());
+        }
+
+        return ignore;
+    }
+
+    private void logMessage(int lineNumber) {
+        final String msg = getMessage();
+
+        if (illegalPattern) {
+            log(lineNumber, MSG_ILLEGAL_REGEXP, msg);
+        }
+        else {
+            log(lineNumber, MSG_DUPLICATE_REGEXP, msg);
+        }
+    }
+
+    private String getMessage() {
+        String msg = message;
+
+        if (msg == null || msg.isEmpty()) {
+            msg = format.pattern();
+        }
+
+        if (errorCount >= errorLimit) {
+            msg = ERROR_LIMIT_EXCEEDED_MESSAGE + msg;
+        }
+
+        return msg;
+    }
+}
+
+
+
+
+Refactoring summary
+- Extracted getMessage() to eliminate duplicated message construction.
+- Replaced recursive findMatch() calls with a while loop.
+- Simplified isIgnore() by removing unnecessary local variables.
+- Preserved the existing public API and matching configuration.
+Important: The original implementation's continuation condition and error-limit behaviour are subtle. Run the existing Checkstyle test suite, particularly tests for errorLimit, duplicateLimit, ignored comments, and required patterns, before accepting this change.
