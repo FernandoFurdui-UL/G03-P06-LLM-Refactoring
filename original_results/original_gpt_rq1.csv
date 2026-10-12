@@ -1,0 +1,14 @@
+case,original_gpt_P1,original_gpt_P2
+ExtractClass-1,0,0
+ExtractMethod-1,0,1
+ExtractVariable-1,0,0
+InlineMethod-1,0,0
+InlineVariable-1,0,0
+RenameAttribute-1,0,0
+RenameMethod-1,0,1
+RenameParameter-1,1,1
+RenameVariable-1,0,1
+ExtractClass-2,0,1
+ExtractMethod-2,0,1
+ExtractVariable-2,0,0
+TOTAL,1,6
