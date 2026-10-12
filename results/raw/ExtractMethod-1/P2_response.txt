@@ -1,0 +1,65 @@
+There is an extract method opportunity in RegexpCheck: the message-selection logic is duplicated in findMatch() and logMessage(). Extract it into a getMessage() method.
+Refactored code:
+package com.puppycrawl.tools.checkstyle.checks.regexp;
+
+// Keep all existing imports, fields, setters, and other methods unchanged.
+
+private String getMessage() {
+    String msg;
+
+    if (message == null || message.isEmpty()) {
+        msg = format.pattern();
+    }
+    else {
+        msg = message;
+    }
+
+    if (errorCount >= errorLimit) {
+        msg = ERROR_LIMIT_EXCEEDED_MESSAGE + msg;
+    }
+
+    return msg;
+}
+
+@SuppressWarnings("deprecation")
+private void findMatch() {
+    final boolean foundMatch = matcher.find();
+    if (foundMatch) {
+        final FileText text = getFileContents().getText();
+        final LineColumn start = text.lineColumn(matcher.start());
+        final int startLine = start.getLine();
+
+        final boolean ignore = isIgnore(startLine, text, start);
+
+        if (!ignore) {
+            matchCount++;
+            if (illegalPattern || checkForDuplicates
+                    && matchCount - 1 > duplicateLimit) {
+                errorCount++;
+                logMessage(startLine);
+            }
+        }
+        if (canContinueValidation(ignore)) {
+            findMatch();
+        }
+    }
+    else if (!illegalPattern && matchCount == 0) {
+        log(1, MSG_REQUIRED_REGEXP, getMessage());
+    }
+}
+
+private void logMessage(int lineNumber) {
+    final String msg = getMessage();
+
+    if (illegalPattern) {
+        log(lineNumber, MSG_ILLEGAL_REGEXP, msg);
+    }
+    else {
+        log(lineNumber, MSG_DUPLICATE_REGEXP, msg);
+    }
+}
+
+
+
+
+Why this refactoring works: getMessage() centralizes the duplicated logic for selecting the custom or default message and adding the error-limit prefix. Both callers now use the same implementation, reducing duplication without changing the intended behavior.
