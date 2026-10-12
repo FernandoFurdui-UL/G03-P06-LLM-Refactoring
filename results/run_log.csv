@@ -1,3 +1,25 @@
 case,prompt,model,interface,temperature,datetime,response_file,valid_run,note
 ExtractClass-1,P1,GPT-5.6 luna,website,default,2026-10-12 15:15,results/raw/ExtractClass-1/P1_response.txt,yes,
 ExtractClass-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:26,results/raw/ExtractClass-1/P2_response.txt,yes,Two earlier attempts discarded: wrong text pasted by us (not the P2 prompt)
+ExtractClass-2,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:30,results/raw/ExtractClass-2/P1_response.txt,yes,
+ExtractClass-2,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:32,results/raw/ExtractClass-2/P2_response.txt,yes,
+ExtractMethod-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:34,results/raw/ExtractMethod-1/P1_response.txt,yes,Time = upload to GitHub
+ExtractMethod-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:35,results/raw/ExtractMethod-1/P2_response.txt,yes,Time = upload to GitHub
+ExtractVariable-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:38,results/raw/ExtractVariable-1/P1_response.txt,yes,Time = upload to GitHub
+ExtractVariable-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:39,results/raw/ExtractVariable-1/P2_response.txt,yes,Time = upload to GitHub
+InlineMethod-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:42,results/raw/InlineMethod-1/P1_response.txt,yes,Time = upload to GitHub
+InlineMethod-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:43,results/raw/InlineMethod-1/P2_response.txt,yes,Time = upload to GitHub
+InlineVariable-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:44,results/raw/InlineVariable-1/P1_response.txt,yes,Time = upload to GitHub
+InlineVariable-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:45,results/raw/InlineVariable-1/P2_response.txt,yes,Time = upload to GitHub
+RenameAttribute-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:46,results/raw/RenameAttribute-1/P1_response.txt,yes,Time = upload to GitHub
+RenameAttribute-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:47,results/raw/RenameAttribute-1/P2_response.txt,yes,Time = upload to GitHub
+RenameMethod-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:47,results/raw/RenameMethod-1/P1_response.txt,yes,Time = upload to GitHub
+RenameMethod-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:48,results/raw/RenameMethod-1/P2_response.txt,yes,Time = upload to GitHub
+RenameParameter-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:49,results/raw/RenameParameter-1/P1_response.txt,yes,Time = upload to GitHub
+RenameParameter-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:50,results/raw/RenameParameter-1/P2_response.txt,yes,Time = upload to GitHub
+RenameVariable-1,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:51,results/raw/RenameVariable-1/P1_response.txt,yes,Time = upload to GitHub
+RenameVariable-1,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:52,results/raw/RenameVariable-1/P2_response.txt,yes,Time = upload to GitHub
+ExtractMethod-2,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:36,results/raw/ExtractMethod-2/P1_response.txt,yes,Time = upload to GitHub
+ExtractMethod-2,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:37,results/raw/ExtractMethod-2/P2_response.txt,yes,Time = upload to GitHub
+ExtractVariable-2,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:40,results/raw/ExtractVariable-2/P1_response.txt,yes,Time = upload to GitHub
+ExtractVariable-2,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-12 15:41,results/raw/ExtractVariable-2/P2_response.txt,yes,Time = upload to GitHub
