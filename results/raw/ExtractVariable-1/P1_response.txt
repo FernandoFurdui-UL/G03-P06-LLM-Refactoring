@@ -1,0 +1,52 @@
+The Checker class has refactoring opportunities, particularly in processFiles(), processFile(), and setupChild(). However, extracting these methods into separate classes would be a larger architectural change. A minimal refactoring can improve readability without changing the existing behavior.
+Refactoring opportunities
+1. Extract duplicated cache cleanup into a private helper method.
+2. Extract violation creation for exceptions into a helper method.
+3. Simplify getExternalResourceLocations() by removing the unnecessary block around the lambda.
+4. Simplify setFileExtensions() using String.startsWith() and a conditional expression.
+Refactored code changes
+Apply these replacements to the original class.
+1. Simplify getExternalResourceLocations()
+
+private Set<String> getExternalResourceLocations() {
+    return Stream.concat(fileSetChecks.stream(), filters.getFilters().stream())
+            .filter(ExternalResourceHolder.class::isInstance)
+            .flatMap(resource -> ((ExternalResourceHolder) resource)
+                    .getExternalResourceLocations().stream())
+            .collect(Collectors.toSet());
+}
+
+
+
+2. Extract duplicated cache cleanup from processFiles()
+Add this helper method:
+
+private void removeFromCache(String fileName) {
+    if (fileName != null && cacheFile != null) {
+        cacheFile.remove(fileName);
+    }
+}
+
+
+
+Replace both occurrences of the cache cleanup code in the catch blocks with:
+removeFromCache(fileName);
+
+
+3. Simplify setFileExtensions()
+
+public final void setFileExtensions(String... extensions) {
+    if (extensions != null) {
+        fileExtensions = new String[extensions.length];
+        for (int i = 0; i < extensions.length; i++) {
+            final String extension = extensions[i];
+            fileExtensions[i] = extension.startsWith(EXTENSION_SEPARATOR)
+                    ? extension
+                    : EXTENSION_SEPARATOR + extension;
+        }
+    }
+}
+
+
+
+These changes preserve the class's existing responsibilities and behavior, assuming valid, non-null extension entries as before. They are small readability improvements rather than a major redesign.
