@@ -1,0 +1,198 @@
+There are several refactoring opportunities in WeightedSpanTermExtractor, particularly in the large extract() method, which handles many different query types in one long conditional chain.
+The main opportunities are:
+1. Extract methods — move the PhraseQuery and MultiPhraseQuery conversion logic into dedicated methods.
+2. Simplify conditionals — extract the BooleanQuery, DisjunctionMaxQuery, and wrapper-query traversal into helper methods.
+3. Improve readability — replace repeated casts and nested logic with smaller, clearly named methods.
+4. Preserve behaviour — retain the existing query-handling order, protected extension points, scoring, and resource cleanup.
+Because this is Apache Lucene code, the refactoring should remain conservative: avoid changing query semantics or introducing new dependencies.
+Refactored code
+The most useful low-risk change is to extract the two largest query-conversion branches into separate methods. Replace the existing extract() method with the following and add the two helper methods to the same class. Leave the rest of the class unchanged.
+
+protected void extract(Query query, float boost, Map<String, WeightedSpanTerm> terms)
+        throws IOException {
+    if (query instanceof BoostQuery) {
+        BoostQuery boostQuery = (BoostQuery) query;
+        extract(boostQuery.getQuery(), boost * boostQuery.getBoost(), terms);
+
+    } else if (query instanceof BooleanQuery) {
+        for (BooleanClause clause : (BooleanQuery) query) {
+            if (!clause.isProhibited()) {
+                extract(clause.getQuery(), boost, terms);
+            }
+        }
+
+    } else if (query instanceof PhraseQuery) {
+        extractPhraseQuery((PhraseQuery) query, boost, terms);
+
+    } else if (query instanceof TermQuery || query instanceof SynonymQuery) {
+        extractWeightedTerms(terms, query, boost);
+
+    } else if (query instanceof SpanQuery) {
+        extractWeightedSpanTerms(terms, (SpanQuery) query, boost);
+
+    } else if (query instanceof ConstantScoreQuery) {
+        Query q = ((ConstantScoreQuery) query).getQuery();
+        if (q != null) {
+            extract(q, boost, terms);
+        }
+
+    } else if (query instanceof CommonTermsQuery) {
+        extractWeightedTerms(terms, query, boost);
+
+    } else if (query instanceof DisjunctionMaxQuery) {
+        for (Query clause : (DisjunctionMaxQuery) query) {
+            extract(clause, boost, terms);
+        }
+
+    } else if (query instanceof MultiPhraseQuery) {
+        extractMultiPhraseQuery((MultiPhraseQuery) query, boost, terms);
+
+    } else if (query instanceof MatchAllDocsQuery || query instanceof FieldExistsQuery) {
+        // These queries do not contribute highlighting terms.
+
+    } else if (query instanceof FunctionScoreQuery) {
+        extract(((FunctionScoreQuery) query).getWrappedQuery(), boost, terms);
+
+    } else if (isQueryUnsupported(query.getClass())) {
+        // Unsupported queries do not contribute highlighting terms.
+
+    } else {
+        if (query instanceof MultiTermQuery
+                && (!expandMultiTermQuery
+                        || !fieldNameComparator(((MultiTermQuery) query).getField()))) {
+            return;
+        }
+
+        Query rewritten;
+        IndexReader reader = getLeafContext().reader();
+
+        if (query instanceof MultiTermQuery) {
+            rewritten = MultiTermQuery.SCORING_BOOLEAN_REWRITE.rewrite(
+                    new IndexSearcher(reader), (MultiTermQuery) query);
+        } else {
+            rewritten = query.rewrite(new IndexSearcher(reader));
+        }
+
+        if (rewritten != query) {
+            extract(rewritten, boost, terms);
+        } else {
+            extractUnknownQuery(query, terms);
+        }
+    }
+}
+
+private void extractPhraseQuery(
+        PhraseQuery phraseQuery,
+        float boost,
+        Map<String, WeightedSpanTerm> terms) throws IOException {
+
+    Term[] phraseTerms = phraseQuery.getTerms();
+
+    if (phraseTerms.length == 1) {
+        extractWeightedSpanTerms(
+                terms, new SpanTermQuery(phraseTerms[0]), boost);
+        return;
+    }
+
+    SpanQuery[] clauses = new SpanQuery[phraseTerms.length];
+
+    for (int i = 0; i < phraseTerms.length; i++) {
+        clauses[i] = new SpanTermQuery(phraseTerms[i]);
+    }
+
+    int[] positions = phraseQuery.getPositions();
+    int positionGaps = 0;
+
+    if (positions.length >= 2) {
+        positionGaps = Math.max(
+                0,
+                positions[positions.length - 1]
+                        - positions[0]
+                        - positions.length + 1);
+    }
+
+    boolean inOrder = phraseQuery.getSlop() == 0;
+
+    SpanNearQuery spanQuery = new SpanNearQuery(
+            clauses,
+            phraseQuery.getSlop() + positionGaps,
+            inOrder);
+
+    extractWeightedSpanTerms(terms, spanQuery, boost);
+}
+
+private void extractMultiPhraseQuery(
+        MultiPhraseQuery query,
+        float boost,
+        Map<String, WeightedSpanTerm> terms) throws IOException {
+
+    Term[][] termArrays = query.getTermArrays();
+    int[] positions = query.getPositions();
+
+    if (positions.length == 0) {
+        return;
+    }
+
+    int maxPosition = positions[positions.length - 1];
+
+    for (int position : positions) {
+        maxPosition = Math.max(maxPosition, position);
+    }
+
+    @SuppressWarnings("unchecked")
+    List<SpanQuery>[] disjunctLists = new List[maxPosition + 1];
+
+    int distinctPositions = 0;
+
+    for (int i = 0; i < termArrays.length; i++) {
+        Term[] termArray = termArrays[i];
+        int position = positions[i];
+
+        List<SpanQuery> disjuncts = disjunctLists[position];
+
+        if (disjuncts == null) {
+            disjuncts = new ArrayList<>(termArray.length);
+            disjunctLists[position] = disjuncts;
+            distinctPositions++;
+        }
+
+        for (Term term : termArray) {
+            disjuncts.add(new SpanTermQuery(term));
+        }
+    }
+
+    int positionGaps = 0;
+    int clauseIndex = 0;
+    SpanQuery[] clauses = new SpanQuery[distinctPositions];
+
+    for (List<SpanQuery> disjuncts : disjunctLists) {
+        if (disjuncts != null) {
+            clauses[clauseIndex++] = new SpanOrQuery(
+                    disjuncts.toArray(new SpanQuery[0]));
+        } else {
+            positionGaps++;
+        }
+    }
+
+    if (clauses.length == 1) {
+        extractWeightedSpanTerms(terms, clauses[0], boost);
+        return;
+    }
+
+    int slop = query.getSlop();
+    boolean inOrder = slop == 0;
+
+    SpanNearQuery spanQuery = new SpanNearQuery(
+            clauses, slop + positionGaps, inOrder);
+
+    extractWeightedSpanTerms(terms, spanQuery, boost);
+}
+
+
+
+Result
+- extract() is easier to scan because the phrase-conversion algorithms are separated.
+- Each helper has one clear responsibility.
+- Early returns reduce nesting in the extracted methods.
+- Existing highlighting logic, boost propagation, and query rewrite behaviour are preserved.
+Important: This is a behaviour-preserving refactoring in intent, but the result should still be compiled and tested against the project's existing Lucene test suite. No functional changes are necessary to justify this refactoring.
