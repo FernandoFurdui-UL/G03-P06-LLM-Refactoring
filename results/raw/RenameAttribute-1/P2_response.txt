@@ -1,0 +1,10 @@
+There are rename attribute refactoring opportunities. The following identifiers could be renamed for clarity:
+Original attribute	Suggested name
+customImportOrderRules	defaultCustomImportOrderRules
+customOrderRules	customImportOrderRules
+importToGroupList	importsGroupedByRule
+samePackageDomainsRegExp	samePackageDomainsRegex
+standardPackageRegExp	standardPackageRegex
+thirdPartyPackageRegExp	thirdPartyPackageRegex
+specialImportsRegExp	specialImportsRegex
+Important: These are identifier-only changes; all references must be updated consistently. The RegExp to Regex changes are optional naming improvements, while the other changes better communicate the attributes' purposes. The constant customImportOrderRules should also use uppercase naming if it remains static final, following Java conventions.
