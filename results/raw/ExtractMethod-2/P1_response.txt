@@ -1,0 +1,1 @@
+A minor refactoring opportunity is to remove duplicated test setup by extracting the repeated try-with-resources and EOF assertion into a helper method. However, the existing tests are simple and readable, so refactoring is not strictly necessary.
