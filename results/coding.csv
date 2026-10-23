@@ -3,10 +3,10 @@ ExtractClass-1,P1,0,0,1,0,
 ExtractClass-1,P2,0,0,1,0,
 ExtractMethod-1,P1,1,1,1,1,
 ExtractMethod-1,P2,1,1,1,1,
-ExtractVariable-1,P1,0,1,0,0,
-ExtractVariable-1,P2,0,1,0,0,
+ExtractVariable-1,P1,0,1,0,0,Changed other code but never extracted file.getPath() so it missed the developers' change.
+ExtractVariable-1,P2,0,1,0,0,Said no extract variable refactoring was needed so it did not find it.
 InlineMethod-1,P1,0,0,1,0,
-InlineMethod-1,P2,0,1,0,0,Suggested removing configure() but backed itself out and gave no code (marker_A=0 as i think it is not done)
+InlineMethod-1,P2,0,1,0,0,Suggested removing configure() but backed itself out and gave no code (marker_A=0 as i think it is not done),Suggested removing configure() but then backed out and gave no code.
 InlineVariable-1,P1,1,0,0,1,Did not mention that the rewritten code removes origQuery (maerk_A = 1 as code is changed)
 InlineVariable-1,P2,1,1,1,1,
 RenameAttribute-1,P1,0,0,1,0,
