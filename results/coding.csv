@@ -3,17 +3,17 @@ ExtractClass-1,P1,0,0,1,0,
 ExtractClass-1,P2,0,0,1,0,
 ExtractMethod-1,P1,1,1,1,1,
 ExtractMethod-1,P2,1,1,1,1,
-ExtractVariable-1,P1,0,1,0,0,Changed other code but never extracted file.getPath() so it missed the developers' change.
-ExtractVariable-1,P2,0,1,0,0,Said no extract variable refactoring was needed so it did not find it.
+ExtractVariable-1,P1,0,1,0,0,Changed other code but never extracted file.getPath() so it missed the developers' change. (I agree with marker A)
+ExtractVariable-1,P2,0,1,0,0,Said no extract variable refactoring was needed so it did not find it. (I agree more with marker A)
 InlineMethod-1,P1,0,0,1,0,
-InlineMethod-1,P2,0,1,0,0,Suggested removing configure() but backed itself out and gave no code (marker_A=0 as i think it is not done),Suggested removing configure() but then backed out and gave no code.
-InlineVariable-1,P1,1,0,0,1,Did not mention that the rewritten code removes origQuery (maerk_A = 1 as code is changed)
+InlineMethod-1,P2,0,1,0,0,Suggested removing configure() but backed itself out and gave no code (marker_A=0 as i think it is not done). (I agree more with marker A)
+InlineVariable-1,P1,1,0,0,1,Did not mention that the rewritten code removes origQuery (maerk_A = 1 as code is changed) (I agree more with marker A)
 InlineVariable-1,P2,1,1,1,1,
 RenameAttribute-1,P1,0,0,1,0,
 RenameAttribute-1,P2,1,1,1,1,
 RenameMethod-1,P1,0,0,1,0,
-RenameMethod-1,P2,0,1,0,0,Markers disagreed; LLM renamed but not the correct target method
-RenameParameter-1,P1,1,0,0,1,Called it Extract Method but code also renames severityLevelNameLength to severityLevelName
+RenameMethod-1,P2,0,1,0,0,Markers disagreed; LLM renamed but not the correct target method. (I agree more with marker A)
+RenameParameter-1,P1,1,0,0,1,Called it Extract Method but code also renames severityLevelNameLength to severityLevelName. (I agree more with marker A)
 RenameParameter-1,P2,1,1,1,1,
 RenameVariable-1,P1,0,0,1,0,
 RenameVariable-1,P2,1,1,1,1,
