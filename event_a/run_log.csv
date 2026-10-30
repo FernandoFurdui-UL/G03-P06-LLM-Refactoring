@@ -1,17 +1,17 @@
 case,prompt,model,interface,temperature,datetime,response_file,valid_run,note
-ExtractClass-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/ExtractClass-3/P1_response.txt,,
-ExtractClass-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/ExtractClass-3/P2_response.txt,,
-ExtractMethod-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/ExtractMethod-3/P1_response.txt,,
-ExtractMethod-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/ExtractMethod-3/P2_response.txt,,
-ExtractVariable-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/ExtractVariable-3/P1_response.txt,,
-ExtractVariable-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/ExtractVariable-3/P2_response.txt,,
-InlineMethod-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/InlineMethod-3/P1_response.txt,,
-InlineMethod-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/InlineMethod-3/P2_response.txt,,
-InlineVariable-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/InlineVariable-3/P1_response.txt,,
-InlineVariable-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/InlineVariable-3/P2_response.txt,,
-RenameAttribute-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/RenameAttribute-3/P1_response.txt,,
-RenameAttribute-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/RenameAttribute-3/P2_response.txt,,
-RenameMethod-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/RenameMethod-3/P1_response.txt,,
-RenameMethod-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/RenameMethod-3/P2_response.txt,,
-RenameParameter-3,P1,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/RenameParameter-3/P1_response.txt,,
-RenameParameter-3,P2,GPT-5.6 luna,website (temporary chat),default,,event_a/raw/RenameParameter-3/P2_response.txt,,
+ExtractClass-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:34,event_a/raw/ExtractClass-3/P1_response.txt,yes,Full reply copied with the reply copy button after two partial copies (code box only) from the same chat; same answer, not a re-run
+ExtractClass-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:37,event_a/raw/ExtractClass-3/P2_response.txt,yes,
+ExtractMethod-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:38,event_a/raw/ExtractMethod-3/P1_response.txt,yes,
+ExtractMethod-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:39,event_a/raw/ExtractMethod-3/P2_response.txt,yes,
+ExtractVariable-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:40,event_a/raw/ExtractVariable-3/P1_response.txt,yes,
+ExtractVariable-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:41,event_a/raw/ExtractVariable-3/P2_response.txt,yes,
+InlineMethod-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:42,event_a/raw/InlineMethod-3/P1_response.txt,yes,Pasted into chat as text rather than as a file
+InlineMethod-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:43,event_a/raw/InlineMethod-3/P2_response.txt,yes,Pasted into chat as text; code line breaks were lost in copying (content intact)
+InlineVariable-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:45,event_a/raw/InlineVariable-3/P1_response.txt,yes,
+InlineVariable-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:46,event_a/raw/InlineVariable-3/P2_response.txt,yes,
+RenameAttribute-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:47,event_a/raw/RenameAttribute-3/P1_response.txt,yes,Pasted into chat as text
+RenameAttribute-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:49,event_a/raw/RenameAttribute-3/P2_response.txt,yes,
+RenameMethod-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:50,event_a/raw/RenameMethod-3/P1_response.txt,yes,Code formatting partly garbled by the website copy (escaped characters/broken code blocks); content kept as copied
+RenameMethod-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:51,event_a/raw/RenameMethod-3/P2_response.txt,yes,
+RenameParameter-3,P1,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:52,event_a/raw/RenameParameter-3/P1_response.txt,yes,
+RenameParameter-3,P2,GPT-5.6 luna,website (temporary chat),default,2026-10-30 09:53,event_a/raw/RenameParameter-3/P2_response.txt,yes,

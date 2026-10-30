@@ -1,0 +1,25 @@
+There is an opportunity for Inline Method Refactoring in the provided code.
+The method `validateNullToStringStyleRegistry()` contains only one statement and is called only once, from the `after()` method. Therefore, it can be eliminated by moving its assertion directly into `after()`.
+Refactored Code
+Refactored AbstractLangTest.java
+package org.apache.commons.lang3;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import org.apache.commons.lang3.builder.ToStringStyle; import org.junit.jupiter.api.AfterEach;
+/**
+
+* All tests subclass this test. */ public class AbstractLangTest {
+/**
+   * All tests should leave the {@link ToStringStyle} registry empty. */ @AfterEach public void after() { assertNull(ToStringStyle.getRegistry(), "Expected null, actual: " + ToStringStyle.getRegistry()); }
+
+}
+Explanation
+
+* Original method: `validateNullToStringStyleRegistry()` contains only a single assertion.
+* Refactoring applied: Its assertion has been moved directly into the `after()` method.
+* Removed method: `validateNullToStringStyleRegistry()` is no longer necessary.
+* Benefits:
+   * Reduces unnecessary method declarations.
+   * Eliminates an unnecessary method call.
+   * Improves code readability by keeping the assertion close to its execution point.
+
+Conclusion: Inline Method Refactoring is appropriate because the helper method performs a single operation and is called only once.

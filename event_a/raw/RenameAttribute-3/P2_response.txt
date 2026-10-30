@@ -1,0 +1,203 @@
+Yes, there are several opportunities for **Rename Attribute Refactoring** in the provided `DiffBuilder` class. Some field and variable names can be improved to make their purpose clearer and the code easier to maintain.
+
+## 1\. Identified Refactoring Opportunities
+
+The following identifiers can be renamed:
+
+| Original identifier | Suggested identifier | Reason |
+| --- | --- | --- |
+| `leftS` | `leftSupplier` | Makes it clear that the field represents a supplier of the left-hand value. |
+| `rightS` | `rightSupplier` | Makes it clear that the field represents a supplier of the right-hand value. |
+| `objectsEquals` | `objectsAreEqual` | Improves grammatical correctness and communicates the boolean's meaning more clearly. |
+| `objectToTest` | `candidateObject` | Better describes the object being examined to determine whether it is an array. |
+| `testObjectsEquals` | `checkObjectEquality` | More clearly communicates the purpose of the boolean constructor parameter. |
+
+## 2\. Refactored Code
+
+The following changes should be applied consistently throughout the class.
+
+### A. Rename `leftS` and `rightS`
+
+Original:
+
+java
+
+```
+private final transient Supplier<T> leftS;
+private final transient Supplier<T> rightS;
+```
+
+Refactored:
+
+java
+
+```
+private final transient Supplier<T> leftSupplier;
+private final transient Supplier<T> rightSupplier;
+```
+
+Update the constructor:
+
+java
+
+```
+private SDiff(final String fieldName,
+              final Supplier<T> leftSupplier,
+              final Supplier<T> rightSupplier,
+              final Class<T> type) {
+    super(fieldName, type);
+    this.leftSupplier = leftSupplier;
+    this.rightSupplier = rightSupplier;
+}
+```
+
+Update the getter methods:
+
+java
+
+```
+@Override
+public T getLeft() {
+    return leftSupplier.get();
+}
+
+@Override
+public T getRight() {
+    return rightSupplier.get();
+}
+```
+
+### B. Rename `objectsEquals`
+
+Original:
+
+java
+
+```
+private final boolean objectsEquals;
+```
+
+Refactored:
+
+java
+
+```
+private final boolean objectsAreEqual;
+```
+
+Update its initialization:
+
+java
+
+```
+this.objectsAreEqual = checkObjectEquality && Objects.equals(lhs, rhs);
+```
+
+All references to `objectsEquals` throughout the class should also be replaced with `objectsAreEqual`.
+
+For example:
+
+Original:
+
+java
+
+```
+return objectsEquals || lhs == rhs ? this :
+    add(fieldName, () -> Boolean.valueOf(lhs),
+        () -> Boolean.valueOf(rhs), Boolean.class);
+```
+
+Refactored:
+
+java
+
+```
+return objectsAreEqual || lhs == rhs ? this :
+    add(fieldName, () -> Boolean.valueOf(lhs),
+        () -> Boolean.valueOf(rhs), Boolean.class);
+```
+
+### C. Rename `testObjectsEquals`
+
+Original constructor parameter:
+
+java
+
+```
+final boolean testObjectsEquals
+```
+
+Refactored:
+
+java
+
+```
+final boolean checkObjectEquality
+```
+
+The constructor becomes:
+
+java
+
+```
+public DiffBuilder(final T lhs, final T rhs,
+                   final ToStringStyle style,
+                   final boolean checkObjectEquality) {
+
+    this.left = Objects.requireNonNull(lhs, "lhs");
+    this.right = Objects.requireNonNull(rhs, "rhs");
+    this.diffs = new ArrayList<>();
+    this.toStringFormat = DiffBuilder.TO_STRING_FORMAT;
+    this.style = style != null ? style : ToStringStyle.DEFAULT_STYLE;
+
+    // Don't compare any fields if objects are equal
+    this.objectsAreEqual =
+        checkObjectEquality && Objects.equals(lhs, rhs);
+}
+```
+
+The corresponding Javadoc parameter description should also be updated.
+
+### D. Rename `objectToTest`
+
+Original:
+
+java
+
+```
+final Object objectToTest = lhs != null ? lhs : rhs;
+
+if (ObjectUtils.isArray(objectToTest)) {
+```
+
+Refactored:
+
+java
+
+```
+final Object candidateObject = lhs != null ? lhs : rhs;
+
+if (ObjectUtils.isArray(candidateObject)) {
+```
+
+The remaining references to `objectToTest` should be replaced with `candidateObject`.
+
+---
+
+## 3\. Summary of Refactoring
+
+The recommended rename operations are:
+
+text
+
+```
+leftS              → leftSupplier
+rightS             → rightSupplier
+objectsEquals      → objectsAreEqual
+testObjectsEquals  → checkObjectEquality
+objectToTest       → candidateObject
+```
+
+**Conclusion:** Rename Attribute Refactoring is applicable to this class. These changes improve identifier readability, naming consistency, and understandability without changing the program's functionality or behavior.
+
+The refactoring should be performed using an IDE's **Rename Refactoring** functionality to ensure that all references, including constructor assignments, method bodies, and Javadoc references, are updated consistently.
