@@ -53,7 +53,7 @@
 ## What transfers and what does not
 
 **Transfers: naming the type helps.**
-- P2 beats P1 on every type except Extract Class.
+- P2 beats P1 on every type except Extract Class and Extract Method.
 - The gap of 6 is larger than both M2's (4) and the paper's (4) on these cases.
 - *Strongest evidence:* all 6 non-extract-class/method cases went from 0 under P1 to 1 under P2.
 
