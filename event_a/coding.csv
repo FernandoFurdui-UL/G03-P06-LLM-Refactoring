@@ -1,8 +1,8 @@
 case,prompt,marker_A,marker_B,agreed,final_identified_0_1,note
-ExtractClass-3,P1,,,,,
-ExtractClass-3,P2,,,,,
-ExtractMethod-3,P1,,,,,
-ExtractMethod-3,P2,,,,,
+ExtractClass-3,P1,,0,,,
+ExtractClass-3,P2,,0,,,
+ExtractMethod-3,P1,,0,,,
+ExtractMethod-3,P2,,0,,,
 ExtractVariable-3,P1,,,,,
 ExtractVariable-3,P2,,,,,
 InlineMethod-3,P1,,,,,
