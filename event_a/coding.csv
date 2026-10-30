@@ -15,3 +15,13 @@ RenameMethod-3,P1,,0,,,
 RenameMethod-3,P2,,1,,,
 RenameParameter-3,P1,,0,,,
 RenameParameter-3,P2,,1,,,
+
+summary,value
+P1_total (out of 8),
+P2_total (out of 8),
+gap (P2 - P1),
+decision (gap >= 3 = M2 holds),
+paper_P1,1
+paper_P2,5
+paper_gap,4
+marker_agreement (out of 16),
