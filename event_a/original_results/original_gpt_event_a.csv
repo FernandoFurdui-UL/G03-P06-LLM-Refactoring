@@ -1,0 +1,10 @@
+case,original_gpt_P1,original_gpt_P2
+ExtractClass-3,0,0
+ExtractMethod-3,0,1
+ExtractVariable-3,0,0
+InlineMethod-3,0,1
+InlineVariable-3,0,0
+RenameAttribute-3,0,1
+RenameMethod-3,1,1
+RenameParameter-3,0,1
+TOTAL,1,5
