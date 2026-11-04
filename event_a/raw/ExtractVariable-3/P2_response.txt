@@ -1,0 +1,197 @@
+Yes, there are several opportunities for refactoring, particularly where expressions and validation logic are repeated. The most useful improvement is to extract the common locale-validation logic into a reusable method.
+
+## Identified refactoring opportunities
+
+1. **Extract repeated locale validation:** The following statements appear in three methods:java
+   ```
+   Objects.requireNonNull(locale, "locale");
+   assumeFalse(LocaleUtils.isLanguageUndetermined(locale), () -> toFailureMessage(locale, null));
+   assumeTrue(LocaleUtils.isAvailableLocale(locale), () -> toFailureMessage(locale, null));
+   ```
+   Extract them into a method called `assumeValidLocale()`.
+2. **Extract the time-zone pattern:** The string `"z"` is repeatedly used when creating `FastDateParser` instances. Define it as a constant, `TIME_ZONE_PATTERN`.
+3. **Extract repeated locale string conversion:** The expression `locale.toString()` occurs multiple times in the exception-handling logic. Store its result in a local variable.
+4. **Simplify failure-message generation:** Correct the argument ordering in `toFailureMessage()`, ensuring that the locale and language tag appear in their intended positions.
+
+## Refactored code
+
+The following shows the main changes while preserving the original test behavior.
+
+java
+
+```
+public class FastDateParser_TimeZoneStrategyTest extends AbstractLangTest {
+
+    private static final String TIME_ZONE_PATTERN = "z";
+
+    private static final String[] FAILS_ON_GH_JAVA_17 = {
+        "zh_HK", "zh_HK_#Hans", "zh_MO_#Hans", "nn", "nn_NO_#Latn",
+        "nn_NO", "pt_AO", "pt_CV", "pt_GW", "pt_LU", "pt_PT",
+        "pt_TL", "es_AR", "es_BZ", "es_BR", "es_CL", "es_CO",
+        "es_CR", "es_CU", "es_EC", "es_SV", "es_GT", "es_HN",
+        "es_419", "es_MX", "es_NI", "es_PA", "es_PY", "es_PE",
+        "es_PR", "es_UY", "es_VE", "sv_SE_#Latn", "sv_SE"
+    };
+
+    private static final List<Locale> Java17Failures = new ArrayList<>();
+
+    static {
+        Arrays.sort(FAILS_ON_GH_JAVA_17);
+    }
+
+    // Other existing methods remain unchanged.
+
+    private void assumeValidLocale(final Locale locale, final String languageTag) {
+        Objects.requireNonNull(locale, "locale");
+
+        assumeFalse(
+            LocaleUtils.isLanguageUndetermined(locale),
+            () -> toFailureMessage(locale, languageTag)
+        );
+
+        assumeTrue(
+            LocaleUtils.isAvailableLocale(locale),
+            () -> toFailureMessage(locale, languageTag)
+        );
+    }
+
+    private void testTimeZoneStrategyPattern(
+            final String languageTag,
+            final String source) throws ParseException {
+
+        final Locale locale = Locale.forLanguageTag(languageTag);
+
+        assumeValidLocale(locale, languageTag);
+
+        final TimeZone tzDefault = TimeZone.getTimeZone("Etc/UTC");
+        final FastDateParser parser =
+            new FastDateParser(TIME_ZONE_PATTERN, tzDefault, locale);
+
+        parser.parse(source);
+
+        testTimeZoneStrategyPattern_TimeZone_getAvailableIDs(locale);
+    }
+
+    private void testTimeZoneStrategyPattern_DateFormatSymbols_getZoneStrings(
+            final Locale locale) {
+
+        assumeValidLocale(locale, null);
+
+        final String[][] zones = ArraySorter.sort(
+            DateFormatSymbols.getInstance(locale).getZoneStrings(),
+            Comparator.comparing(array -> array[0])
+        );
+
+        for (final String[] zone : zones) {
+            for (int zIndex = 1; zIndex < zone.length; ++zIndex) {
+
+                final String tzDisplay = zone[zIndex];
+
+                if (tzDisplay == null) {
+                    break;
+                }
+
+                final TimeZone timeZone = TimeZone.getDefault();
+
+                final FastDateParser parser =
+                    new FastDateParser(TIME_ZONE_PATTERN, timeZone, locale);
+
+                try {
+                    parser.parse(tzDisplay);
+
+                } catch (ParseException e) {
+
+                    final String localeString = locale.toString();
+
+                    if (SystemUtils.IS_JAVA_17
+                            && Arrays.binarySearch(
+                                FAILS_ON_GH_JAVA_17,
+                                localeString
+                            ) > 0) {
+
+                        Java17Failures.add(locale);
+
+                        System.err.println(
+                            "Java 17 - Mark as an assumption failure instead of a hard fail: "
+                                + localeString
+                        );
+
+                        assumeTrue(false, localeString);
+                        continue;
+                    }
+
+                    final String msg = String.format(
+                        "%s: with locale = %s, zIndex = %,d, tzDisplay = '%s', parser = '%s'",
+                        e, locale, zIndex, tzDisplay, parser.toString()
+                    );
+
+                    fail(msg, e);
+                }
+            }
+        }
+    }
+
+    private void testTimeZoneStrategyPattern_TimeZone_getAvailableIDs(
+            final Locale locale) {
+
+        assumeValidLocale(locale, null);
+
+        for (final String id : ArraySorter.sort(TimeZone.getAvailableIDs())) {
+
+            final TimeZone timeZone = TimeZone.getTimeZone(id);
+
+            final FastDateParser parser =
+                new FastDateParser(TIME_ZONE_PATTERN, timeZone, locale);
+
+            final String displayName = timeZone.getDisplayName(locale);
+
+            try {
+                parser.parse(displayName);
+
+            } catch (ParseException e) {
+
+                fail(
+                    String.format(
+                        "%s: with locale = %s, id = '%s', timeZone = %s, displayName = '%s', parser = '%s'",
+                        e, locale, id, timeZone, displayName,
+                        parser.toStringAll()
+                    ),
+                    e
+                );
+            }
+        }
+    }
+
+    private String toFailureMessage(
+            final Locale locale,
+            final String languageTag) {
+
+        return String.format(
+            "locale = %s, languageTag = '%s', isAvailableLocale = %s, isLanguageUndetermined = %s",
+            locale,
+            languageTag,
+            LocaleUtils.isAvailableLocale(locale),
+            LocaleUtils.isLanguageUndetermined(locale)
+        );
+    }
+}
+```
+
+**Note:** The code above illustrates the refactored methods; the original imports, annotations, constants, and remaining test methods should be retained.
+
+## Summary of improvements
+
+| Refactoring | Original code | Refactored code | Benefit |
+| --- | --- | --- | --- |
+| Extract method | Repeated locale validation | `assumeValidLocale()` | Reduces duplication |
+| Extract constant | Repeated `"z"` | `TIME_ZONE_PATTERN` | Improves maintainability |
+| Extract variable | Repeated `locale.toString()` | `localeString` | Improves readability |
+| Simplify formatting | Incorrect argument ordering | Corrected argument ordering | Improves diagnostic messages |
+
+### Conclusion
+
+The most significant improvement is **Extract Method**, which centralizes locale validation and eliminates duplicated code in three methods.
+
+The additional constant and local-variable extractions make the code easier to understand and maintain.
+
+The refactoring preserves the existing test logic, although the corrected failure-message argument ordering intentionally fixes an existing diagnostic issue.

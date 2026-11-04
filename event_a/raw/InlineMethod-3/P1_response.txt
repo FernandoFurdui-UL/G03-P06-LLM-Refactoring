@@ -1,0 +1,41 @@
+The code is already simple and readable, but there is one minor refactoring opportunity: avoid calling `ToStringStyle.getRegistry()` twice.
+You can store the result in a local variable and use it in the assertion. This improves readability and avoids redundant method calls.
+Refactored code
+java
+
+```
+package org.apache.commons.lang3;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.junit.jupiter.api.AfterEach;
+
+/**
+ * All tests subclass this test.
+ */
+public class AbstractLangTest {
+
+    /**
+     * All tests should leave the {@link ToStringStyle} registry empty.
+     */
+    @AfterEach
+    public void after() {
+        validateNullToStringStyleRegistry();
+    }
+
+    void validateNullToStringStyleRegistry() {
+        final Object registry = ToStringStyle.getRegistry();
+        assertNull(registry, "Expected null, actual: " + registry);
+    }
+}
+
+```
+
+Refactoring rationale
+
+* Avoid redundant method calls: `ToStringStyle.getRegistry()` is invoked only once.
+* Improve readability: The local variable makes the assertion easier to understand.
+* Maintain behavior: The refactoring preserves the original assertion and its failure message.
+
+Note: This is a minor optimization rather than a necessary refactoring. The original implementation is already clean, straightforward, and maintainable.
