@@ -1,0 +1,12 @@
+Comparing source compatibility of <work_dir>/build/canary_final/commons-lang3-canary_final.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+***! MODIFIED CLASS: PUBLIC FINAL (<- NON_FINAL) org.apache.commons.lang3.builder.ReflectionDiffBuilder  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	GENERIC TEMPLATES: === T:java.lang.Object
+
+Comparing binary compatibility of <work_dir>/build/canary_final/commons-lang3-canary_final.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+***! MODIFIED CLASS: PUBLIC FINAL (<- NON_FINAL) org.apache.commons.lang3.builder.ReflectionDiffBuilder  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	GENERIC TEMPLATES: === T:java.lang.Object
+
+E: There is at least one incompatibility: org.apache.commons.lang3.builder.ReflectionDiffBuilder:CLASS_NOW_FINAL
+See '--help' or '-h' for more information.

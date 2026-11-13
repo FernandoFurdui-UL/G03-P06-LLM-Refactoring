@@ -1,0 +1,4 @@
+Comparing source compatibility of <work_dir>/build/developer/commons-lang3-developer.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+No changes.
+Comparing binary compatibility of <work_dir>/build/developer/commons-lang3-developer.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+No changes.

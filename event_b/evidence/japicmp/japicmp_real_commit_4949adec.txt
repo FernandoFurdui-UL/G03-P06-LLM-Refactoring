@@ -1,0 +1,19 @@
+Comparing source compatibility of <work_dir>/build/real_4949adec4/real.jar against <work_dir>/build/real_aa4eef85c/real.jar
+***  MODIFIED CLASS: PUBLIC org.apache.commons.lang3.builder.ReflectionDiffBuilder  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	GENERIC TEMPLATES: === T:java.lang.Object
+	===  UNCHANGED CONSTRUCTOR: PUBLIC ReflectionDiffBuilder(java.lang.Object, java.lang.Object, org.apache.commons.lang3.builder.ToStringStyle)
+		+++  NEW ANNOTATION: java.lang.Deprecated
+	+++  NEW METHOD: PUBLIC(+) STATIC(+) org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> builder()
+		GENERIC TEMPLATES: +++ T:java.lang.Object
+	===  UNCHANGED METHOD: PUBLIC org.apache.commons.lang3.builder.ReflectionDiffBuilder<T><T> setExcludeFieldNames(java.lang.String[])
+		+++  NEW ANNOTATION: java.lang.Deprecated
++++  NEW CLASS: PUBLIC(+) STATIC(+) FINAL(+) org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder  (not serializable)
+	+++  CLASS FILE FORMAT VERSION: 52.0 <- n.a.
+	GENERIC TEMPLATES: +++ T:java.lang.Object
+	+++  NEW SUPERCLASS: java.lang.Object
+	+++  NEW CONSTRUCTOR: PUBLIC(+) ReflectionDiffBuilder$Builder()
+	+++  NEW METHOD: PUBLIC(+) org.apache.commons.lang3.builder.ReflectionDiffBuilder<T> build()
+	+++  NEW METHOD: PUBLIC(+) org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> setDiffBuilder(org.apache.commons.lang3.builder.DiffBuilder<T>)
+	+++  NEW METHOD: PUBLIC(+) org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> setExcludeFieldNames(java.lang.String[])
+

@@ -1,0 +1,6 @@
+baseline      1 diff(s)
+developer     1 diff(s)
+llm_p1        1 diff(s)
+llm_p2        1 diff(s)
+canary_final  1 diff(s)
+canary_param  Exception in thread "main" java.lang.NoSuchMethodError: 'void org.apache.commons.lang3.builder.ReflectionDiffBuilder.<init>(java.lang.Object, java.lang.Object, org.apache.commons.lang3.builder.ToStringStyle)'

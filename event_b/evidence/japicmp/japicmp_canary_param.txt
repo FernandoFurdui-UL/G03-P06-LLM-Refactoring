@@ -1,0 +1,17 @@
+Comparing source compatibility of <work_dir>/build/canary_param/commons-lang3-canary_param.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+***! MODIFIED CLASS: PUBLIC org.apache.commons.lang3.builder.ReflectionDiffBuilder  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	GENERIC TEMPLATES: === T:java.lang.Object
+	---! REMOVED CONSTRUCTOR: PUBLIC(-) ReflectionDiffBuilder(java.lang.Object, java.lang.Object, org.apache.commons.lang3.builder.ToStringStyle)
+		---  REMOVED ANNOTATION: java.lang.Deprecated
+	+++  NEW CONSTRUCTOR: PUBLIC(+) ReflectionDiffBuilder(java.lang.Object, java.lang.Object, java.lang.Object)
+		+++  NEW ANNOTATION: java.lang.Deprecated
+
+Comparing binary compatibility of <work_dir>/build/canary_param/commons-lang3-canary_param.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+***! MODIFIED CLASS: PUBLIC org.apache.commons.lang3.builder.ReflectionDiffBuilder  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	GENERIC TEMPLATES: === T:java.lang.Object
+	---! REMOVED CONSTRUCTOR: PUBLIC(-) ReflectionDiffBuilder(java.lang.Object, java.lang.Object, org.apache.commons.lang3.builder.ToStringStyle)
+
+E: There is at least one incompatibility: org.apache.commons.lang3.builder.ReflectionDiffBuilder.ReflectionDiffBuilder(java.lang.Object,java.lang.Object,org.apache.commons.lang3.builder.ToStringStyle):CONSTRUCTOR_REMOVED
+See '--help' or '-h' for more information.

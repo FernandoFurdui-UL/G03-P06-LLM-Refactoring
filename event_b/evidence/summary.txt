@@ -1,0 +1,7 @@
+baseline: tests: [ 47 tests successful ] [ 0 tests failed ]  | japicmp exit=0 (0 = no incompatibility) | client: 1 diff(s)
+developer: tests: [ 47 tests successful ] [ 0 tests failed ]  | japicmp exit=0 (0 = no incompatibility) | client: 1 diff(s)
+llm_p1: tests: [ 47 tests successful ] [ 0 tests failed ]  | japicmp exit=0 (0 = no incompatibility) | client: 1 diff(s)
+llm_p2: tests: [ 47 tests successful ] [ 0 tests failed ]  | japicmp exit=0 (0 = no incompatibility) | client: 1 diff(s)
+canary_final: tests: [ 47 tests successful ] [ 0 tests failed ]  | japicmp exit=1 (0 = no incompatibility) | client: 1 diff(s)
+canary_param: tests: [ 47 tests successful ] [ 0 tests failed ]  | japicmp exit=1 (0 = no incompatibility) | client: Exception in thread "main" java.lang.NoSuchMethodError: 'void org.apache.commons.lang3.builder.ReflectionDiffBuilder.<init>(java.lang.Object, java.lang.Object, org.apache.commons.lang3.builder.ToStringStyle)'
+real commit aa4eef85c -> 4949adec4: see evidence/japicmp/japicmp_real_commit_4949adec.txt

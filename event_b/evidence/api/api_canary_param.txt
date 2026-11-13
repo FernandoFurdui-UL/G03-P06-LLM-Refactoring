@@ -1,0 +1,16 @@
+Compiled from "ReflectionDiffBuilder.java"
+public class org.apache.commons.lang3.builder.ReflectionDiffBuilder<T> implements org.apache.commons.lang3.builder.Builder<org.apache.commons.lang3.builder.DiffResult<T>> {
+  public static <T> org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> builder();
+  public org.apache.commons.lang3.builder.ReflectionDiffBuilder(T, T, java.lang.Object);
+  public org.apache.commons.lang3.builder.DiffResult<T> build();
+  public java.lang.String[] getExcludeFieldNames();
+  public org.apache.commons.lang3.builder.ReflectionDiffBuilder<T> setExcludeFieldNames(java.lang.String...);
+  public java.lang.Object build();
+}
+Compiled from "ReflectionDiffBuilder.java"
+public final class org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> {
+  public org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder();
+  public org.apache.commons.lang3.builder.ReflectionDiffBuilder<T> build();
+  public org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> setDiffBuilder(org.apache.commons.lang3.builder.DiffBuilder<T>);
+  public org.apache.commons.lang3.builder.ReflectionDiffBuilder$Builder<T> setExcludeFieldNames(java.lang.String...);
+}

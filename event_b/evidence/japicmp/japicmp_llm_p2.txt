@@ -1,0 +1,4 @@
+Comparing source compatibility of <work_dir>/build/llm_p2/commons-lang3-llm_p2.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+No changes.
+Comparing binary compatibility of <work_dir>/build/llm_p2/commons-lang3-llm_p2.jar against <work_dir>/build/baseline/commons-lang3-baseline.jar
+No changes.
