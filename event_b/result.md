@@ -50,6 +50,8 @@
 
 The `javap` public signatures of `developer`, `llm_p1` and `llm_p2` are identical to `baseline` (`evidence/api/`).
 
+In `evidence/client/client_run.txt`, "1 diff(s)" means the client ran normally and found the one difference it expects between its two test objects; only canary_param fails with NoSuchMethodError.
+
 **Key findings**
 - **The M4 refactoring is API-safe.** The prediction was correct: the developers' change leaves the public API unchanged.
 - **The LLM rewrites are API-safe too.** Both ExtractMethod-3 LLM answers kept the public API byte-for-byte, including `@Deprecated` markers. P1 said it was "preserving the existing public API", and that claim is now verified rather than assumed. The prediction that they were *the likely risk* was not borne out.
