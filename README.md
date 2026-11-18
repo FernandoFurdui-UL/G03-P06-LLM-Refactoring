@@ -15,3 +15,5 @@ deviations.md: anything we did differently from our Week 5 plan.
 
 ## How to check a result
 Every score can be traced back. Start from a mark in coding.csv, find the matching answer in results/raw, then the prompt it came from in sample, and the case in sample_ids.csv.
+
+final_conclusion.md: the final answers to RQ1 and RQ2, the main limitation, and how to re-run or audit each part.
