@@ -1,0 +1,45 @@
+The appropriate refactoring is **Inline Method**. The `moreThanFiveLateDeliveries()` method is simple and unnecessary, so we can move its condition directly into `getRating()` and remove the method.
+
+### **1. Inlined method**
+
+The original method:
+
+```
+boolean moreThanFiveLateDeliveries() {
+  return numberOfLateDeliveries > 5;
+}
+```
+
+Its logic is inserted directly into `getRating()`:
+
+```
+int getRating() {
+  return numberOfLateDeliveries > 5 ? 2 : 1;
+}
+```
+
+### **2. Refactored code**
+
+```
+class PizzaDelivery {
+  int numberOfLateDeliveries;
+
+  PizzaDelivery(int numberOfLateDeliveries) {
+    this.numberOfLateDeliveries = numberOfLateDeliveries;
+  }
+
+  int getRating() {
+    return numberOfLateDeliveries > 5 ? 2 : 1;
+  }
+}
+```
+
+### **3. What changed?**
+
+| Before                                              | After                                                |
+| --------------------------------------------------- | ---------------------------------------------------- |
+| `getRating()` called `moreThanFiveLateDeliveries()` | Condition is evaluated directly inside `getRating()` |
+| Separate helper method existed                      | Helper method removed                                |
+| Extra method call and indirection                   | Simpler, more direct code                            |
+
+**Result:** The Inline Method refactoring removes the unnecessary helper method, simplifies the class, and preserves the original behaviour.

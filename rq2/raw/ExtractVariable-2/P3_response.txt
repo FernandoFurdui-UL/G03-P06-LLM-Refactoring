@@ -1,0 +1,67 @@
+The appropriate refactoring is **Extract Variable**. We can break the complex condition into two meaningful boolean variables: one representing whether a change or experiment activity is requested, and another representing whether the frame and screen sizes match.
+
+### **1. Extracted variables**
+
+```
+boolean changeRequested = frame.isChanged || target.isChanged
+                        || experiment.isRunning();
+
+boolean isFullscreen = frame.getSize() == screen.getSize();
+```
+
+### **2. Refactored code**
+
+```
+class Frame {
+  boolean isChanged;
+  int size;
+  int getSize() { return size; }
+}
+
+class Target {
+  boolean isChanged;
+}
+
+class Experiment {
+  boolean running;
+  boolean isRunning() { return running; }
+}
+
+class Screen {
+  int size;
+  int getSize() { return size; }
+}
+
+class BannerRenderer {
+  Frame frame = new Frame();
+  Target target = new Target();
+  Experiment experiment = new Experiment();
+  Screen screen = new Screen();
+  boolean printed = false;
+
+  void renderBanner() {
+    // Render banner only if we're in fullscreen mode and
+    // a change is requested either in frame or target, or
+    // experiment is active.
+
+    boolean changeRequested = frame.isChanged || target.isChanged
+                             || experiment.isRunning();
+
+    boolean isFullscreen = frame.getSize() == screen.getSize();
+
+    if (changeRequested && isFullscreen) {
+      printed = true; // Print banner.
+    }
+  }
+}
+```
+
+### **3. What changed?**
+
+| Before                                         | After                                               |
+| ---------------------------------------------- | --------------------------------------------------- |
+| One complex boolean condition                  | Two named boolean variables                         |
+| Harder to understand the condition at a glance | `changeRequested` and `isFullscreen` clarify intent |
+| Logic embedded directly inside `if`            | Logic separated into descriptive variables          |
+
+**Result:** The Extract Variable refactoring makes the condition more readable and easier to maintain without changing the original program's behaviour.

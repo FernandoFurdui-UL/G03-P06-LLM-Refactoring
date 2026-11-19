@@ -1,0 +1,40 @@
+Here is the refactored code using Extract Variable. The complex condition is assigned to a descriptive boolean variable named `shouldRender`, making the `if` statement easier to understand.
+
+```
+class Banner {
+  String platform;
+  String browser;
+  int resize;
+  boolean initialized;
+  boolean rendered = false;
+
+  Banner(String platform, String browser, int resize, boolean initialized) {
+    this.platform = platform;
+    this.browser = browser;
+    this.resize = resize;
+    this.initialized = initialized;
+  }
+
+  boolean wasInitialized() {
+    return initialized;
+  }
+
+  void renderBanner() {
+    boolean shouldRender = (platform.toUpperCase().indexOf("MAC") > -1) &&
+                          (browser.toUpperCase().indexOf("IE") > -1) &&
+                          wasInitialized() && resize > 0;
+
+    if (shouldRender) {
+      rendered = true; // do something
+    }
+  }
+}
+```
+
+What changed:
+
+* Extracted the complex boolean expression into the `shouldRender` variable.
+* Simplified the `if` statement to check `shouldRender`.
+* Preserved the original condition and behaviour.
+
+This improves readability by giving the condition a meaningful name without changing the program's logic.

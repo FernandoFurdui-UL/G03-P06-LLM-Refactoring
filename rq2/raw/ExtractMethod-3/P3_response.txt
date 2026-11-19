@@ -1,0 +1,92 @@
+The appropriate refactoring is **Extract Method**. We can move the regional discount logic into a separate method called `applyRegionalDiscount()`, making `calculateTotal()` easier to read and maintain.
+
+### **1. Extracted method**
+
+The regional discount switch statement is extracted into a new method:
+
+```
+private double applyRegionalDiscount(double total) {
+  // Apply regional discounts.
+  switch (user.getCountry()) {
+    case "US": total *= 0.85; break;
+    case "RU": total *= 0.75; break;
+    case "CN": total *= 0.9; break;
+    // ...
+  }
+
+  return total;
+}
+```
+
+### **2. Refactored code**
+
+The `calculateTotal()` method now delegates the discount calculation to the extracted method.
+
+```
+import java.util.List;
+
+class Product {
+  int quantity;
+  double price;
+
+  Product(int quantity, double price) {
+    this.quantity = quantity;
+    this.price = price;
+  }
+}
+
+class User {
+  private String country;
+
+  User(String country) {
+    this.country = country;
+  }
+
+  String getCountry() { return country; }
+}
+
+class Order {
+  private User user;
+  private List<Product> products;
+
+  Order(User user, List<Product> products) {
+    this.user = user;
+    this.products = products;
+  }
+
+  List<Product> getProducts() { return products; }
+
+  private double applyRegionalDiscount(double total) {
+    // Apply regional discounts.
+    switch (user.getCountry()) {
+      case "US": total *= 0.85; break;
+      case "RU": total *= 0.75; break;
+      case "CN": total *= 0.9; break;
+      // ...
+    }
+
+    return total;
+  }
+
+  public double calculateTotal() {
+    double total = 0;
+    for (Product product : getProducts()) {
+      total += product.quantity * product.price;
+    }
+
+    total = applyRegionalDiscount(total);
+
+    return total;
+  }
+}
+```
+
+### **3. What changed?**
+
+| Before                                                 | After                                            |
+| ------------------------------------------------------ | ------------------------------------------------ |
+| Regional discount logic was inside `calculateTotal()`  | Moved into `applyRegionalDiscount()`             |
+| `calculateTotal()` handled both subtotal and discounts | Subtotal and discount logic are separated        |
+| Method was harder to read                              | Method is more structured and easier to maintain |
+
+**Result:** The Extract Method refactoring improves readability by separating regional discount calculations from the main order-total calculation, while preserving the original behaviour.

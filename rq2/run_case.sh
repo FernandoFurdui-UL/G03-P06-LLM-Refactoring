@@ -16,4 +16,4 @@ cp "$HERE/$C/$T.java" "$OUT/src/"
 if ! javac -nowarn -encoding UTF-8 -d "$OUT/classes" "$OUT"/src/*.java 2> "$OUT/javac.log"; then
   echo "$C [$WHAT]: COMPILE FAILED"; head -5 "$OUT/javac.log"; exit 2
 fi
-java -cp "$OUT/classes" "$T" | sed "s/^/$C [$WHAT]: /"
+java -cp "$OUT/classes" "$T" | sed "s|^|$C [$WHAT]: |"

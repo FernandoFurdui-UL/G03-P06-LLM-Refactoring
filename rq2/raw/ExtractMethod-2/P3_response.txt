@@ -1,0 +1,64 @@
+The appropriate refactoring is **Extract Method**. We can move the code responsible for formatting and printing each user's properties into a separate method called `printUserProperties()`, making `printProperties()` cleaner and easier to read.
+
+### **1. Extracted method**
+
+The following code fragment is extracted into a new method:
+
+```
+void printUserProperties(User user) {
+  String result = "";
+  result += user.getName();
+  result += " ";
+  result += user.getAge();
+  System.out.println(result);
+}
+```
+
+### **2. Refactored code**
+
+The original `User` class remains unchanged. The `UserPrinter` class now calls the extracted method inside the loop.
+
+```
+import java.util.List;
+
+class User {
+  private String name;
+  private int age;
+
+  User(String name, int age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  String getName() { return name; }
+  int getAge() { return age; }
+}
+
+class UserPrinter {
+  void printUserProperties(User user) {
+    String result = "";
+    result += user.getName();
+    result += " ";
+    result += user.getAge();
+    System.out.println(result);
+  }
+
+  void printProperties(List<User> users) {
+    for (int i = 0; i < users.size(); i++) {
+      printUserProperties(users.get(i));
+
+      // ...
+    }
+  }
+}
+```
+
+### **3. What changed?**
+
+| Before                                                      | After                                     |
+| ----------------------------------------------------------- | ----------------------------------------- |
+| Formatting and printing were inside the loop                | Moved into `printUserProperties()`        |
+| `printProperties()` handled iteration and output formatting | It now focuses on iterating through users |
+| Code was less modular                                       | Output logic is separated and reusable    |
+
+**Result:** The refactoring improves readability and maintainability without changing the program's behaviour. The extracted method can also be reused anywhere a single user's properties need to be printed.

@@ -1,0 +1,53 @@
+The appropriate refactoring is **Rename Method**. The method `getlnm()` has a vague and abbreviated name, so we can rename it to `getLastName()` to make its purpose clearer and more readable.
+
+### **1. Renamed method**
+
+Original method:
+
+```
+/**
+ * Method returns customer's lastname.
+ */
+String getlnm() {
+  return lastName;
+}
+```
+
+Renamed method:
+
+```
+/**
+ * Method returns customer's last name.
+ */
+String getLastName() {
+  return lastName;
+}
+```
+
+### **2. Refactored code**
+
+```
+class Customer {
+  private String name = "name";
+  private String lastName = "lastname";
+
+  /**
+   * Method returns customer's last name.
+   */
+  String getLastName() {
+    return lastName;
+  }
+
+  // other methods ...
+}
+```
+
+### **3. What changed?**
+
+| Before                           | After                                                         |
+| -------------------------------- | ------------------------------------------------------------- |
+| `getlnm()`                       | `getLastName()`                                               |
+| Abbreviated, unclear method name | Descriptive, readable method name                             |
+| Harder to understand at a glance | Clearly communicates that it returns the customer's last name |
+
+**Result:** The Rename Method refactoring improves readability and makes the method's purpose self-explanatory without changing its functionality.

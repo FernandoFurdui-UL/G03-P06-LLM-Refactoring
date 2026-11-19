@@ -1,1 +1,10 @@
 case,prompt,model,interface,temperature,datetime,response_file,valid_run,note
+ExtractClass,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/ExtractClass/P3_response.txt,yes,"Pasted by Cormac. Website copy left HTML artefacts (&#x20;) in two headings; text otherwise as received"
+ExtractMethod-1,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/ExtractMethod-1/P3_response.txt,yes,"Pasted by Cormac. Website copy left an HTML artefact (&#x20;) in one heading; text otherwise as received"
+ExtractMethod-2,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/ExtractMethod-2/P3_response.txt,yes,Pasted by Cormac; text as received
+ExtractMethod-3,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/ExtractMethod-3/P3_response.txt,yes,Pasted by Cormac; text as received
+ExtractVariable-1,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/ExtractVariable-1/P3_response.txt,yes,Pasted by Cormac; text as received
+ExtractVariable-2,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/ExtractVariable-2/P3_response.txt,yes,Pasted by Cormac; text as received
+InlineMethod,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/InlineMethod/P3_response.txt,yes,Pasted by Cormac; text as received
+InlineTemp,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/InlineTemp/P3_response.txt,yes,Pasted by Cormac; text as received
+RenameMethod,P3,GPT-5.6 luna (per plan; confirm),website (temporary chat),default,2026-11-19 (time not recorded),rq2/raw/RenameMethod/P3_response.txt,yes,Pasted by Cormac; text as received

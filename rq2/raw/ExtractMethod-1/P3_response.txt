@@ -1,0 +1,58 @@
+The appropriate refactoring is **Extract Method**. We can group the two statements that print the customer's name and outstanding amount into a new method called `printDetails()`.
+
+### **1. Extracted method**
+
+The following code fragment is extracted into a separate method:
+
+```
+void printDetails() {
+    System.out.println("name: " + name);
+    System.out.println("amount: " + getOutstanding());
+}
+```
+
+### **2. Refactored&#x20;**`Invoice`**&#x20;class**
+
+The original `printOwing()` method now calls `printDetails()` instead of containing the two print statements directly.
+
+```
+class Invoice {
+  private String name;
+  private double outstanding;
+
+  Invoice(String name, double outstanding) {
+    this.name = name;
+    this.outstanding = outstanding;
+  }
+
+  double getOutstanding() {
+    return outstanding;
+  }
+
+  void printBanner() {
+    System.out.println("*** Customer Owes ***");
+  }
+
+  void printDetails() {
+    System.out.println("name: " + name);
+    System.out.println("amount: " + getOutstanding());
+  }
+
+  void printOwing() {
+    printBanner();
+
+    // Print details.
+    printDetails();
+  }
+}
+```
+
+### **3. What changed?**
+
+| Before                                                          | After                                    |
+| --------------------------------------------------------------- | ---------------------------------------- |
+| Customer name and amount printed directly inside `printOwing()` | Printing moved into `printDetails()`     |
+| `printOwing()` contained multiple responsibilities              | `printOwing()` delegates detail printing |
+| Code was less modular                                           | Code is easier to read and maintain      |
+
+**Result:** The `printOwing()` method is now cleaner and more readable. The extracted `printDetails()` method groups the customer details printing logic into a reusable, clearly named method without changing the program's behaviour.

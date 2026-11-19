@@ -1,0 +1,72 @@
+A good **Extract Class** refactoring is to move the weapon-related fields and behaviour into a separate `Weapon` class. This separates the soldier's health and combat target behaviour from weapon damage and weapon status.
+
+### **1. Extracted&#x20;**`Weapon`**&#x20;class**
+
+The following fields and method are moved from `Soldier` into the new class:
+
+- `damage`
+- `weaponStatus`
+- `getDamage()`
+
+```
+class Weapon {
+    public int damage;
+    public int weaponStatus;
+
+    public Weapon(int damage, int weaponStatus) {
+        this.damage = damage;
+        this.weaponStatus = weaponStatus;
+    }
+
+    public int getDamage() {
+        return weaponStatus > 0 ? damage : 0;
+    }
+}
+```
+
+### **2. Refactored&#x20;**`Soldier`**&#x20;class**
+
+The `Soldier` class now holds a `Weapon` object instead of directly managing the weapon-related fields.
+
+```
+class Soldier {
+    public int health;
+    public Weapon weapon;
+
+    public Soldier(int health, Weapon weapon) {
+        this.health = health;
+        this.weapon = weapon;
+    }
+
+    public void attack(Soldier target) {
+        target.health -= weapon.getDamage();
+    }
+}
+```
+
+### **3. Example usage**
+
+```
+public class Main {
+    public static void main(String[] args) {
+        Weapon weapon = new Weapon(25, 1);
+        Soldier soldier1 = new Soldier(100, weapon);
+        Soldier soldier2 = new Soldier(100, new Weapon(15, 0));
+
+        soldier1.attack(soldier2);
+
+        System.out.println(soldier2.health); // 75
+    }
+}
+```
+
+### **What changed?**
+
+| Before                                        | After                                     |
+| --------------------------------------------- | ----------------------------------------- |
+| Soldier managed health and weapon data        | Soldier manages health and holds a Weapon |
+| Damage and weapon status were part of Soldier | Moved to `Weapon`                         |
+| `getDamage()` was in Soldier                  | Now belongs to `Weapon`                   |
+| Soldier handled all responsibilities          | Responsibilities are separated            |
+
+**Result:** This refactoring improves modularity, readability, and maintainability. The `Soldier` class is now responsible for soldier-related behaviour, while `Weapon` encapsulates weapon-related data and damage calculation.

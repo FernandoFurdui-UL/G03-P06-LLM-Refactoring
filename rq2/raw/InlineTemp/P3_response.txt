@@ -1,0 +1,52 @@
+The appropriate refactoring is **Inline Variable**. The local variable `basePrice` is unnecessary because it is only used once. We can replace it directly with `order.basePrice()` and remove the variable declaration.
+
+### **1. Inlined variable**
+
+Original method:
+
+```
+boolean hasDiscount(Order order) {
+  double basePrice = order.basePrice();
+  return basePrice > 1000;
+}
+```
+
+After inlining:
+
+```
+boolean hasDiscount(Order order) {
+  return order.basePrice() > 1000;
+}
+```
+
+### **2. Refactored code**
+
+```
+class Order {
+  private double price;
+
+  Order(double price) {
+    this.price = price;
+  }
+
+  double basePrice() {
+    return price;
+  }
+}
+
+class Pricing {
+  boolean hasDiscount(Order order) {
+    return order.basePrice() > 1000;
+  }
+}
+```
+
+### **3. What changed?**
+
+| Before                                                     | After                                             |
+| ---------------------------------------------------------- | ------------------------------------------------- |
+| `basePrice` stored the return value of `order.basePrice()` | Variable removed                                  |
+| Extra local variable was used once                         | Method call used directly in the return statement |
+| Two lines of logic                                         | Simplified to one line                            |
+
+**Result:** The Inline Variable refactoring eliminates the unnecessary local variable, improves simplicity and readability, and preserves the original behaviour.
